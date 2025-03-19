@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- AUTH APP
+enum SYSTEM_ROLE {
+  owner
+  moderator
+  user
+}
+
+model User {
+  id        String      @id @default(cuid())
+  email     String      @unique
+  password  String
+  role      SYSTEM_ROLE @default(user)
+  profile   Profile?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([email])
+}
+
+// ---
+
+// --- PROFILE APP
+model Album {
+  id        String    @id @default(cuid())
+  name      String
+  order     Int
+  isPrivate Boolean   @default(false)
+  profileId String
+  profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  pictures  Picture[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([profileId, order])
+  @@index([createdAt])
+  @@index([updatedAt])
+}
+
+model Picture {
+  id        String   @id @default(cuid())
+  url       String
+  order     Int
+  albumId   String?
+  album     Album?   @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  profileId String?
+  profile   Profile? @relation(fields: [profileId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([albumId, order])
+}
+
+model Gender {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  profiles Profile[]
+}
+
+model Pronoun {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  profiles Profile[]
+}
+
+enum SEXUAL_ROLE {
+  top
+  bottom
+  versatile
+  vers_top
+  vers_bottom
+  side
+}
+
+model Profile {
+  id        String       @id @default(cuid())
+  userId    String       @unique
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  age       Int?
+  name      String?
+  height    Float?
+  weight    Float?
+  sexRole   SEXUAL_ROLE?
+  pictures  Picture[]
+  albums    Album[]
+  genders   Gender[]
+  pronouns  Pronoun[]
+  bio       String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([createdAt])
+}
+
+// ---

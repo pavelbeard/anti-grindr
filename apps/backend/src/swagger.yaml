@@ -1,0 +1,224 @@
+openapi: "3.0.0"
+info:
+  title: "Anti-Grindr"
+  version: "1.0.0"
+  description: "An alternative to Grindr, which abuses its position on the market to suck off more money from users."
+
+servers:
+  - url: "http://localhost:5100"
+    description: "Development server"
+
+paths:
+  "/api/users":
+    get:
+      summary: "Get all users"
+      tags:
+        - Users
+      responses:
+        200:
+          description: "List of users"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: ABRACADABRA
+                    email:
+                      type: string
+                      example: "john@example.com"
+                    name:
+                      type: string
+                      example: "john_doe"
+                    age:
+                      type: integer
+                      example: 25
+                      constraints:
+                        minimum: 18
+                        maximum: 99
+                    created_at:
+                      type: datetime
+                      example: "2024-01-25T10:30:00Z"
+                    updated_at:
+                      type: datetime
+                      example: "2024-01-25T14:45:30+02:00"
+
+  "/api/users/register":
+    post:
+      summary: "Register a new user"
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "john@example.com"
+                  unique: true
+                name:
+                  type: string
+                  example: "john_doe"
+                age:
+                  type: integer
+                  example: 25
+                  constraints:
+                    minimum: 18
+                    maximum: 99
+                password:
+                  type: string
+                  example: "password123"
+      responses:
+        201:
+          description: "User created"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: ABRACADABRA
+                  email:
+                    type: string
+                    example: "john_doe@example.com"
+                  name:
+                    type: string
+                    example: "john_doe"
+                  age:
+                    type: integer
+                    example: 25
+                    constraints:
+                      minimum: 18
+                      maximum: 99
+                  created_at:
+                    type: datetime
+                    example: "2024-01-25T10:30:00Z"
+                  updated_at:
+                    type: datetime
+                    example: "2024-01-25T14:45:30+02:00"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: "Email already in use"
+                  age:
+                    type: string
+                    example: "Age must be between 18 and 99"
+
+  "/api/messages/send":
+    post:
+      summary: "Send a message"
+      tags:
+        - Messages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                senderId:
+                  type: string
+                  example: ABRACADABRA
+                receiverId:
+                  type: string
+                  example: ABRACADABRA
+                content:
+                  type: string
+                  example: "Hello, how are you?"
+      responses:
+        201:
+          description: "Message sent"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: ABRACADABRA
+                  senderId:
+                    type: string
+                    example: ABRACADABRA
+                  receiveId:
+                    type: string
+                    example: ABRACADABRA
+                  content::
+                    type: string
+                    example: "Hello, how are you?"
+                  createdAt:
+                    type: datetime
+                    example: "2024-01-25T10:30:00Z"
+                  updatedAt:
+                    type: datetime
+                    example: "2024-01-25T14:45:30+02:00"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  senderId:
+                    type: string
+                    example: "Sender not found"
+                  receiveId:
+                    type: string
+                    example: "Receiver not found"
+                  content:
+                    type: string
+                    example: "Message cannot be empty"
+
+  "/api/messages/:userId":
+    get:
+      summary: "Get all messages for a user"
+      tags:
+        - Messages
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: "User ID"
+          schema:
+            type: string
+            example: ABRACADABRA
+      responses:
+        200:
+          description: "List of messages"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: ABRACADABRA
+                    senderId:
+                      type: string
+                      example: ABRACADABRA
+                    receiverId:
+                      type: string
+                      example: ABRACADABRA
+                    content:
+                      type: string
+                      example: "Hello, how are you?"
+                    createdAt:
+                      type: datetime
+                      example: "2024-01-25T10:30:00Z"
+                    updatedAt:
+                      type: datetime
+                      example: "2024-01-25T14:45:30+02:00"

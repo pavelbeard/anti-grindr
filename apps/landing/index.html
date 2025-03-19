@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anti-grindr</title>
+    <style>
+      :root {
+        --primary-color: #1ca621;
+        --secondary-color: #000000;
+        --tertiary-color: #ffffff99;
+        --quaternary-color: #d1dee4;
+      }
+
+      body {
+        display: grid;
+        grid-template-rows: 75px 1fr auto;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        background-color: var(--primary-color);
+        color: white;
+        text-align: center;
+      }
+
+      header {
+        background-color: var(--secondary-color);
+        padding: 0 25px;
+        border-bottom: 2.5px solid var(--quaternary-color);
+      }
+
+      li {
+        display: inline;
+        margin: 0 10px;
+        font-size: 18px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: start;
+        font-size: 24px;
+      }
+
+      .logo h1 {
+        margin: 0;
+      }
+
+      .navbar {
+        height: 100%;
+      }
+
+      .navbar ul {
+        height: 100%;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        align-items: center;
+      }
+
+      .navbar ul li {
+        margin: 0;
+      }
+
+      .auth {
+        grid-column: 3;
+      }
+
+      .auth ul {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        text-transform: uppercase;
+        gap: 12px;
+      }
+
+      .auth ul li {
+        cursor: not-allowed;
+        color: var(--tertiary-color);
+        font-size: 16px;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr 1fr;
+        padding-left: 25px;
+        padding-top: 25px;
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        gap: 24px;
+      }
+
+      .content p {
+        font-size: 48px;
+        text-transform: uppercase;
+        letter-spacing: 0px;
+        font-weight: 900;
+        width: 300px;
+        margin: 0;
+        text-align: left;
+      }
+
+      .soon {
+        grid-column: 2;
+        grid-row: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .soon h1 {
+        font-size: 48px;
+        font-weight: 900;
+        letter-spacing: 0px;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <ul>
+          <li class="logo"><h1>Greender</h1></li>
+          <li class="auth">
+            <ul>
+              <li>Sign up (Soon)</li>
+              <li>Log in (Soon)</li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <section class="content">
+        <p>Be free from bindings.</p>
+        <p>You are our focus.</p>
+      </section>
+      <section class="soon">
+        <h1>Soon...</h1>
+      </section>
+    </main>
+    <footer>
+      <p id="copyright">Greender &copy;</p>
+    </footer>
+  </body>
+  <script type="text/javascript">
+    const year = new Date().getFullYear();
+    document.getElementById("copyright").innerText += ` ${year}`;
+  </script>
+</html>
