@@ -1,0 +1,49 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "globalDependencies": [
+        "./packages/configs/.prettierrc",
+        "**/.env.*"
+    ],
+    "tasks": {
+        "dev": {
+            "cache": false,
+            "persistent": true,
+            "env": [
+                "NODE_ENV",
+                "PORT"
+            ],
+            "outputLogs": "errors-only"
+        },
+        "build": {
+            "dependsOn": [
+                "^build"
+            ],
+            "inputs": [
+                "src/**/*.{ts,js,tsx,jsx}",
+                "packages.json",
+                "tsconfig*.json"
+            ],
+            "outputs": [
+                "./dist/**",
+                "./.next/**",
+                "./.cache/**",
+                "./public/**"
+            ]
+        },
+        "lint": {
+            "inputs": [
+                "src/**/*.{ts,js,tsx,jsx}"
+            ],
+            "outputs": []
+        },
+        "test": {
+            "inputs": [
+                "./src/**",
+                "./tests/**"
+            ],
+            "outputs": [
+                "./coverage/**"
+            ]
+        }
+    }
+}
