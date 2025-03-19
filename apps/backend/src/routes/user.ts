@@ -2,7 +2,7 @@ import Router from "express";
 import { Request, Response } from "express";
 import { TestUser } from "@/types/user";
 
-let users: TestUser[] = [];
+const users: TestUser[] = [];
 
 const router = Router();
 
