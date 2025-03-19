@@ -9,7 +9,7 @@
     "module": "NodeNext",
     "moduleResolution": "nodenext",
     "baseUrl": "./",
-    "types": ["node"],
+    "types": ["jest", "node"],
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     /* Type checking */
@@ -22,8 +22,8 @@
     "noImplicitThis": true,
     /* Paths */
     "paths": {
-      "@/*": ["src/*"],
-      "tests/*": ["tests/*"],
+      "@/*": ["./src/*"],
+      "tests/*": ["./tests/*"],
     }
   }
 }
