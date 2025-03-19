@@ -12,7 +12,7 @@
                 "NODE_ENV",
                 "PORT"
             ],
-            "outputLogs": "errors-only"
+            "outputLogs": "full"
         },
         "build": {
             "dependsOn": [
