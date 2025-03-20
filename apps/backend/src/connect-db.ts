@@ -1,8 +1,5 @@
-export default async function connectDb() {
-  return new Promise<void>((resolve, reject) => {
-    setTimeout(() => {
-      console.log("Connected to database");
-      resolve();
-    }, 1000);
-  });
-}
+import { PrismaClient } from "@prisma/client";
+
+const connection = new PrismaClient();
+
+export default connection;

@@ -11,7 +11,7 @@ servers:
 paths:
   "/api/users":
     get:
-      summary: "Get all users"
+      summary: "Get all Greender users"
       tags:
         - Users
       responses:
