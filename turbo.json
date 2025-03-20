@@ -44,6 +44,15 @@
             "outputs": [
                 "./coverage/**"
             ]
+        },
+        "test:vitest": {
+            "inputs": [
+                "./src/**",
+                "./tests/**"
+            ],
+            "outputs": [
+                "./coverage/**"
+            ]
         }
     }
 }

@@ -1,14 +1,22 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
 
 export default {
-  preset: "ts-jest",
+  preset: "ts-jest/presets/default-esm",
   testEnvironment: "node",
-  transform: {
-    "^.+.tsx?$": ["ts-jest", {}],
-  },
+  extensionsToTreatAsEsm: [".ts"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
+    "^tests/(.*)$": "<rootDir>/tests/$1",
   },
-  // setupFiles: ["<rootDir>/jest.setup.ts"],
-  // setupFilesAfterEnv: ["<rootDir>/singleton.ts"],
+  transform: {
+    "^.+\\.ts$": [
+      "ts-jest",
+      {
+        useESM: true,
+        tsconfig: "./tsconfig.json",
+      },
+    ],
+  },
+  // setupFiles: [],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts", "<rootDir>/singleton.ts"],
 };
