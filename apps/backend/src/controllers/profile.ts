@@ -1,6 +1,6 @@
-import type { Request, Response } from "express";
-import type { Profile } from "@prisma/client";
 import prisma from "@/connect-db.ts";
+import type { Profile } from "@prisma/client";
+import type { Request, Response } from "express";
 
 // TODO: Implement gender, pronoun, picture, album logic
 

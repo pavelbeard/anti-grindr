@@ -1,12 +1,12 @@
-import express, { Request, Response } from "express";
+import { swaggerDocs } from "@/settings.ts";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { config } from "dotenv";
-import { PORT, swaggerDocs } from "@/settings";
+import express, { Request, Response } from "express";
 import swaggerUi from "swagger-ui-express";
 
-import userRouter from "@/routes/user";
-import messageRouter from "@/routes/message";
+import authRouter from "@/routes/auth.ts";
+import messageRouter from "@/routes/message.ts";
 
 config();
 
@@ -22,9 +22,7 @@ app.get("/", (req: Request, res: Response) => {
 
 // routers
 
-app.use("/api/users", userRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/messages", messageRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+export default app;

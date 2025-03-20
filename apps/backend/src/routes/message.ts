@@ -1,6 +1,13 @@
-import Router from "express";
-import { Request, Response } from "express";
-import { TestMessage } from "@/types/message";
+import Router, { Request, Response } from "express";
+
+type TestMessage = {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 const messages: TestMessage[] = [];
 
