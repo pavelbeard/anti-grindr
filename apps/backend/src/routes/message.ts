@@ -1,4 +1,5 @@
-import Router, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import { Router } from "express";
 
 type TestMessage = {
   id: string;
@@ -11,9 +12,9 @@ type TestMessage = {
 
 const messages: TestMessage[] = [];
 
-const router = Router();
+const messageRouter: Router = Router();
 
-router.post("/send", (req: Request, res: Response) => {
+messageRouter.post("/send", (req: Request, res: Response) => {
   const { senderId, receiverId, content } = req.body;
 
   const message: TestMessage = {
@@ -29,7 +30,7 @@ router.post("/send", (req: Request, res: Response) => {
   res.status(201).json(message);
 });
 
-router.get("/:userId", (req: Request, res: Response) => {
+messageRouter.get("/:userId", (req: Request, res: Response) => {
   const userId = req.params.userId;
 
   const userMessages = messages.filter(
@@ -39,4 +40,4 @@ router.get("/:userId", (req: Request, res: Response) => {
   res.status(200).json(userMessages);
 });
 
-export default router;
+export default messageRouter;

@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   title: "Anti-Grindr"
-  version: "1.0.0"
+  version: "0.0.1"
   description: "An alternative to Grindr, which abuses its position on the market to suck off more money from users."
 
 servers:
@@ -9,48 +9,11 @@ servers:
     description: "Development server"
 
 paths:
-  "/api/users":
-    get:
-      summary: "Get all Greender users"
-      tags:
-        - Users
-      responses:
-        200:
-          description: "List of users"
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      example: ABRACADABRA
-                    email:
-                      type: string
-                      example: "john@example.com"
-                    name:
-                      type: string
-                      example: "john_doe"
-                    age:
-                      type: integer
-                      example: 25
-                      constraints:
-                        minimum: 18
-                        maximum: 99
-                    created_at:
-                      type: datetime
-                      example: "2024-01-25T10:30:00Z"
-                    updated_at:
-                      type: datetime
-                      example: "2024-01-25T14:45:30+02:00"
-
-  "/api/users/register":
+  "/api/auth/create":
     post:
-      summary: "Register a new user"
+      summary: "Create a new user"
       tags:
-        - Users
+        - Auth
       requestBody:
         required: true
         content:
@@ -61,16 +24,6 @@ paths:
                 email:
                   type: string
                   example: "john@example.com"
-                  unique: true
-                name:
-                  type: string
-                  example: "john_doe"
-                age:
-                  type: integer
-                  example: 25
-                  constraints:
-                    minimum: 18
-                    maximum: 99
                 password:
                   type: string
                   example: "password123"
@@ -80,29 +33,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: ABRACADABRA
-                  email:
-                    type: string
-                    example: "john_doe@example.com"
-                  name:
-                    type: string
-                    example: "john_doe"
-                  age:
-                    type: integer
-                    example: 25
-                    constraints:
-                      minimum: 18
-                      maximum: 99
-                  created_at:
-                    type: datetime
-                    example: "2024-01-25T10:30:00Z"
-                  updated_at:
-                    type: datetime
-                    example: "2024-01-25T14:45:30+02:00"
+                $ref: '#/components/schemas/User'
         400:
           description: "Bad request"
           content:
@@ -110,18 +41,46 @@ paths:
               schema:
                 type: object
                 properties:
-                  email:
+                  error:
                     type: string
-                    example: "Email already in use"
-                  age:
-                    type: string
-                    example: "Age must be between 18 and 99"
+                    example: "Invalid input data"
 
-  "/api/messages/send":
-    post:
-      summary: "Send a message"
+  "/api/auth/{id}":
+    get:
+      summary: "Get user by ID"
       tags:
-        - Messages
+        - Auth
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "User ID"
+          schema:
+            type: string
+            example: cZx909OsA1kaXhsaQ
+      responses:
+        200:
+          description: "User details"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: "User not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User not found"
+
+  "/api/auth/{id}/update-email":
+    patch:
+      summary: "Update user email"
+      tags:
+        - Auth
       requestBody:
         required: true
         content:
@@ -129,41 +88,19 @@ paths:
             schema:
               type: object
               properties:
-                senderId:
+                newEmail:
                   type: string
-                  example: ABRACADABRA
-                receiverId:
+                  example: "newemail@example.com"
+                actualPassword:
                   type: string
-                  example: ABRACADABRA
-                content:
-                  type: string
-                  example: "Hello, how are you?"
+                  example: "password123"
       responses:
-        201:
-          description: "Message sent"
+        200:
+          description: "Email updated"
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: ABRACADABRA
-                  senderId:
-                    type: string
-                    example: ABRACADABRA
-                  receiveId:
-                    type: string
-                    example: ABRACADABRA
-                  content::
-                    type: string
-                    example: "Hello, how are you?"
-                  createdAt:
-                    type: datetime
-                    example: "2024-01-25T10:30:00Z"
-                  updatedAt:
-                    type: datetime
-                    example: "2024-01-25T14:45:30+02:00"
+                $ref: '#/components/schemas/User'
         400:
           description: "Bad request"
           content:
@@ -171,54 +108,110 @@ paths:
               schema:
                 type: object
                 properties:
-                  senderId:
+                  error:
                     type: string
-                    example: "Sender not found"
-                  receiveId:
-                    type: string
-                    example: "Receiver not found"
-                  content:
-                    type: string
-                    example: "Message cannot be empty"
-
-  "/api/messages/:userId":
-    get:
-      summary: "Get all messages for a user"
-      tags:
-        - Messages
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: "User ID"
-          schema:
-            type: string
-            example: ABRACADABRA
-      responses:
-        200:
-          description: "List of messages"
+                    example: "Password required / Passwords are not match"
+        401:
+          description: "Unauthorized"
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      example: ABRACADABRA
-                    senderId:
-                      type: string
-                      example: ABRACADABRA
-                    receiverId:
-                      type: string
-                      example: ABRACADABRA
-                    content:
-                      type: string
-                      example: "Hello, how are you?"
-                    createdAt:
-                      type: datetime
-                      example: "2024-01-25T10:30:00Z"
-                    updatedAt:
-                      type: datetime
-                      example: "2024-01-25T14:45:30+02:00"
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unauthorized"
+        404:
+          description: "User not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User not found"
+        
+
+  "/api/auth/{id}/update-password":
+    patch:
+      summary: "Update user password"
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                actualPassword:
+                  type: string
+                  example: "password123"
+                newPassword:
+                  type: string
+                  example: "newpassword123"
+      responses:
+        200:
+          description: "Password updated"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Password too weak / Password required / Passwords are not match"
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unauthorized"
+        404:
+          description: "User not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User not found"
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: cZx909OsA1kaXhsaQ
+        email:
+          type: string
+          example: "john@example.com"
+        name:
+          type: string
+          example: "john_doe"
+        age:
+          type: integer
+          example: 25
+          constraints:
+            minimum: 18
+            maximum: 99
+        created_at:
+          type: datetime
+          example: "2024-01-25T10:30:00Z"
+        updated_at:
+          type: datetime
+          example: "2024-01-25T14:45:30+02:00"

@@ -14,7 +14,7 @@
     "module": "NodeNext",
     "moduleResolution": "nodenext",
     "baseUrl": ".",
-    "types": ["jest", "node"],
+    "types": ["node", "vitest/globals"],
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "esModuleInterop": true,

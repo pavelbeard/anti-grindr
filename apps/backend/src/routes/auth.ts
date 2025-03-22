@@ -1,28 +1,42 @@
-import { createUserController, getUserController } from "@/controllers/auth.ts";
-import { CreateUser } from "@/types/auth.ts";
+import {
+  createUser,
+  getUser,
+  updateEmail,
+  updatePassword,
+} from "@/controllers/auth.ts";
+import { CreateUser, UpdateEmail, UpdatePassword } from "@/types/auth.ts";
 import type { Request, Response } from "express";
 import { Router } from "express";
 
 const authRouter: Router = Router();
 
 authRouter.post("/create", async (req: Request, res: Response) => {
-  try {
-    const user = createUserController(req.body as CreateUser);
-    res.status(201).json(user);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to create user" });
-    console.error(err);
-  }
+  const user = createUser(req.body as CreateUser);
+  res.status(201).json(user);
 });
 
 authRouter.get("/:id", async (req: Request, res: Response) => {
-  try {
-    const user = await getUserController({ id: req.params.id });
-    res.status(200).json(user);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to get user" });
-    console.error(err);
-  }
+  const user = await getUser({ id: req.params.id });
+  res.status(200).json(user);
 });
+
+authRouter.patch("/:id/update-email", async (req: Request, res: Response) => {
+  const user = await updateEmail({
+    id: req.params.id,
+    data: req.body as UpdateEmail,
+  });
+  res.status(200).json(user);
+});
+
+authRouter.patch(
+  "/:id/update-password",
+  async (req: Request, res: Response) => {
+    const user = await updatePassword({
+      id: req.params.id,
+      data: req.body as UpdatePassword,
+    });
+    res.status(200).json(user);
+  }
+);
 
 export default authRouter;

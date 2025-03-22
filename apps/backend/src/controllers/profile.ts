@@ -1,8 +1,22 @@
-import prisma from "@/connect-db.ts";
-import type { Profile } from "@prisma/client";
+import prisma from "@/lib/prisma.ts";
+import type { Profile, User } from "@prisma/client";
 import type { Request, Response } from "express";
 
 // TODO: Implement gender, pronoun, picture, album logic
+
+export const createProfile = async (id: User["id"]) => {
+  const profile: Profile | null = await prisma.profile.create({
+    data: {
+      userId: id,
+    },
+  });
+
+  if (!profile) {
+    throw new Error("Profile not created");
+  }
+
+  return profile;
+};
 
 export const getProfile = async (req: Request, res: Response) => {
   try {
