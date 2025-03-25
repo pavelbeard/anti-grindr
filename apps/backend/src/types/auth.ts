@@ -1,29 +1,31 @@
-export interface IUserNotFoundError {
-  name: string;
-  message: string;
+import {
+  createUserSchema,
+  signInUserSchema,
+  updateEmailSchema,
+  updatePasswordSchema,
+} from "@/schemas/auth.ts";
+import { User } from "@prisma/client";
+import { z } from "zod";
+
+export interface Session {
+  user: {
+    id: string;
+    email: string;
+  } | null;
 }
 
-export interface IPasswordRequiredError {
-  name: string;
-  message: string;
-}
+export type CreateUser = z.infer<typeof createUserSchema>;
 
-export interface IHashedPasswordError {
-  name: string;
-  message: string;
-}
-
-export interface CreateUser {
+export interface PublicUser {
+  id: string;
   email: string;
-  password: string;
+  role: User["role"];
+  createdAt: User["createdAt"];
+  updatedAt: User["updatedAt"];
 }
 
-export interface UpdateEmail {
-  actualPassword: string;
-  newEmail: string;
-}
+export type UpdateEmail = z.infer<typeof updateEmailSchema>;
 
-export interface UpdatePassword {
-  actualPassword: string;
-  newPassword: string;
-}
+export type UpdatePassword = z.infer<typeof updatePasswordSchema>;
+
+export type SignInUser = z.infer<typeof signInUserSchema>;

@@ -1,107 +1,184 @@
 import {
-  PasswordRequiredError,
+  CreateUserError,
   PasswordsAreNotMatchError,
+  SignInError,
+  UpdateEmailError,
+  UpdatePasswordError,
   UserNotFoundError,
 } from "@/errors/auth.ts";
 import prisma from "@/lib/prisma.ts";
-import type { CreateUser, UpdateEmail, UpdatePassword } from "@/types/auth.ts";
+import {
+  createUserSchema,
+  updateEmailSchema,
+  updatePasswordSchema,
+} from "@/schemas/auth.ts";
+import type {
+  CreateUser,
+  SignInUser,
+  UpdateEmail,
+  UpdatePassword,
+} from "@/types/auth.ts";
 import bcrypt from "@node-rs/bcrypt";
-import type { User } from "@prisma/client";
-// implement Oauth2 flow
 
-export const createUser = async (data: CreateUser) => {
-  const { email, password } = data;
-  const hashedPassword = bcrypt.hashSync(password, 10);
+// TODO: implement Oauth2 flow
 
-  const user = await prisma.user.create({
-    data: {
-      email,
-      password: hashedPassword,
-    },
-  });
+class AuthController {
+  static async createUser(data: CreateUser) {
+    const validatedObject = createUserSchema.safeParse(data);
 
-  if (!user) {
-    throw new Error("User not created.");
+    if (!validatedObject.success) {
+      throw new CreateUserError(validatedObject.error.message);
+    }
+
+    const { email, password } = validatedObject.data;
+
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    if (!user) {
+      throw new CreateUserError();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...publicUser } = user;
+
+    return publicUser;
   }
 
-  return user;
-};
+  static async getUser({ id }: { id: string }) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
 
-export const getUser = async ({ id }: { id: string }) => {
-  const user: User | null = await prisma.user.findUnique({
-    where: {
-      id,
-    },
-  });
+    if (!user) {
+      throw new UserNotFoundError();
+    }
 
-  if (!user) {
-    throw new UserNotFoundError();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...publicUser } = user;
+
+    return publicUser;
   }
 
-  return user;
-};
+  static async updateEmail({ id, data }: { id: string; data: UpdateEmail }) {
+    const validatedObject = updateEmailSchema.safeParse(data);
 
-export const updateEmail = async ({
-  id,
-  data,
-}: {
-  id: string;
-  data: UpdateEmail;
-}) => {
-  const { newEmail, actualPassword } = data;
+    if (!validatedObject.success) {
+      throw new UpdateEmailError(validatedObject.error.message);
+    }
 
-  if (!actualPassword) {
-    throw new PasswordRequiredError();
+    const { newEmail, actualPassword } = validatedObject.data;
+
+    const userPassword = await prisma.user.findUnique({
+      where: { id },
+      select: { password: true },
+    });
+
+    if (!userPassword) {
+      throw new UserNotFoundError();
+    }
+
+    if (!bcrypt.compareSync(actualPassword, userPassword.password)) {
+      throw new PasswordsAreNotMatchError("Actual password is wrong.");
+    }
+
+    const user = await prisma.user.update({
+      where: { id },
+      data: { email: newEmail },
+    });
+
+    if (!user) {
+      throw new UserNotFoundError();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...publicUser } = user;
+
+    return publicUser;
   }
 
-  const userPassword = await prisma.user.findUnique({
-    where: { id },
-    select: { password: true },
-  });
+  static async updatePassword({
+    id,
+    data,
+  }: {
+    id: string;
+    data: UpdatePassword;
+  }) {
+    const validatedObject = updatePasswordSchema.safeParse(data);
 
-  if (!userPassword) {
-    throw new UserNotFoundError();
+    if (!validatedObject.success) {
+      throw new UpdatePasswordError(validatedObject.error.message);
+    }
+
+    const { newPassword, actualPassword } = validatedObject.data;
+
+    const userPassword = await prisma.user.findUnique({
+      where: { id },
+      select: { password: true },
+    });
+
+    if (!userPassword) {
+      throw new UserNotFoundError();
+    }
+
+    if (!bcrypt.compareSync(actualPassword, userPassword.password)) {
+      throw new PasswordsAreNotMatchError("Actual password is wrong.");
+    }
+
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+    const user = await prisma.user.update({
+      where: { id },
+      data: { password: hashedPassword },
+    });
+
+    if (!user) {
+      throw new UserNotFoundError();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...publicUser } = user;
+
+    return publicUser;
   }
 
-  if (!bcrypt.compareSync(actualPassword, userPassword.password)) {
-    throw new PasswordsAreNotMatchError();
+  static async deleteUser() {
+    throw new Error("Not implemented yet");
   }
 
-  return await prisma.user.update({
-    where: { id },
-    data: { email: newEmail },
-  });
-};
+  static async signIn(data: SignInUser) {
+    const validatedObject = createUserSchema.safeParse(data);
 
-export const updatePassword = async ({
-  id,
-  data,
-}: {
-  id: string;
-  data: UpdatePassword;
-}) => {
-  const { newPassword, actualPassword } = data;
+    if (!validatedObject.success) {
+      throw new SignInError(validatedObject.error.message);
+    }
 
-  if (!actualPassword) {
-    throw new PasswordRequiredError();
+    const { email, password } = validatedObject.data;
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new UserNotFoundError("Email is wrong or not found.");
+    }
+
+    if (!bcrypt.compareSync(password, user.password)) {
+      throw new PasswordsAreNotMatchError("Password is wrong.");
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...publicUser } = user;
+
+    return publicUser;
   }
+}
 
-  const userPassword = await prisma.user.findUnique({
-    where: { id },
-    select: { password: true },
-  });
-
-  if (!userPassword) {
-    throw new UserNotFoundError();
-  }
-
-  if (!bcrypt.compareSync(actualPassword, userPassword.password)) {
-    throw new PasswordsAreNotMatchError();
-  }
-
-  const hashedPassword = bcrypt.hashSync(newPassword, 10);
-  return await prisma.user.update({
-    where: { id },
-    data: { password: hashedPassword },
-  });
-};
+export { AuthController };

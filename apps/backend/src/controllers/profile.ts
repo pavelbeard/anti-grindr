@@ -4,6 +4,28 @@ import type { Request, Response } from "express";
 
 // TODO: Implement gender, pronoun, picture, album logic
 
+class ProfileController {
+  async getProfile(id: User["id"]) {
+    const result = await prisma.profile.findUnique({
+      where: { userId: id },
+      include: {
+        genders: true,
+        pronouns: true,
+        pictures: { orderBy: { order: "asc" } },
+        albums: { orderBy: { order: "asc" } },
+      },
+    });
+
+    if (!result) {
+      throw new Error("Profile not found");
+    }
+
+    return result;
+  }
+}
+
+export { ProfileController };
+
 export const createProfile = async (id: User["id"]) => {
   const profile: Profile | null = await prisma.profile.create({
     data: {

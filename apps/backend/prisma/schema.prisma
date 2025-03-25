@@ -26,6 +26,7 @@ model User {
   password  String
   role      SYSTEM_ROLE @default(user)
   profile   Profile?
+  isActive  Boolean     @default(false)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 

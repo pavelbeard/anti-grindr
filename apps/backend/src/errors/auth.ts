@@ -1,44 +1,61 @@
-import {
-  IHashedPasswordError,
-  IPasswordRequiredError,
-  IUserNotFoundError,
-} from "@/types/auth.ts";
+import {} from "@/types/auth.ts";
 
-export class UserNotFoundError implements Error, IUserNotFoundError {
-  name: string;
-  message: string;
-
-  constructor(
-    name: string = "UserNotFoundError",
-    message: string | "User not found" = "User not found"
-  ) {
-    this.name = name;
-    this.message = message;
+export class UserNotFoundError extends Error {
+  constructor(message: string | "User not found" = "User not found") {
+    super(message);
   }
 }
 
-export class PasswordRequiredError implements Error, IPasswordRequiredError {
-  name: string;
-  message: string;
-
+export class PasswordsAreNotMatchError extends Error {
   constructor(
-    name: string = "PasswordRequiredError",
-    message: string | "Password is required" = "Password is required"
-  ) {
-    this.name = name;
-    this.message = message;
-  }
-}
-
-export class PasswordsAreNotMatchError implements Error, IHashedPasswordError {
-  name: string;
-  message: string;
-
-  constructor(
-    name: string = "PasswordsAreNotMatchError",
     message: string | "Passwords are not match" = "Passwords are not match"
   ) {
-    this.name = name;
-    this.message = message;
+    super(message);
+  }
+}
+
+export class CreateUserError extends Error {
+  constructor(
+    message: string | "Error while user creation" = "Error while user creation"
+  ) {
+    super(message);
+  }
+}
+
+export class UpdateEmailError extends Error {
+  constructor(
+    message: string | "Error while email update" = "Error while email update"
+  ) {
+    super(message);
+  }
+}
+
+export class UpdatePasswordError extends Error {
+  constructor(
+    message:
+      | string
+      | "Error while password update" = "Error while password update"
+  ) {
+    super(message);
+  }
+}
+
+export class DeleteUserError extends Error {
+  constructor(
+    message: string | "Error while user deletion" = "Error while user deletion"
+  ) {
+    super(message);
+  }
+}
+
+export class SignInError extends Error {
+  constructor(message: string | "Error while sign in" = "Error while sign in") {
+    super(message);
+  }
+}
+
+export class UnauthorizedError extends Error {
+  constructor(message: string | "Unauthorized" = "Unauthorized") {
+    super(message);
   }
 }
