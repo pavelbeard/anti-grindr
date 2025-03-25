@@ -29,6 +29,6 @@
     /* Paths */
     "paths": {
       "@/*": ["./src/*", "./src/lib/__mocks__/context.ts"],
-    }
+    },  
   }
 }
