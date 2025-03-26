@@ -3,7 +3,7 @@ import {
   UnauthorizedError,
   UpdateEmailError,
   UserNotFoundError,
-} from "@/errors/auth.ts";
+} from "@/errors/user.ts";
 import type { NextFunction, Request, Response } from "express";
 
 export default function errorFallback(

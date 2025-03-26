@@ -11,6 +11,16 @@ const NODE_JWT_SECRET_KEY =
     : process.env.JWT_SECRET_KEY;
 const swaggerDocs = yaml.load(path.join(__dirname, "./swagger.yaml"));
 
+// CORS
+
+const ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  "http://localhost:5100",
+  "https://localhost:5173",
+];
+
+const URL_SCHEME = process.env.NODE_ENV == "production" ? "https" : "http";
+
 // JWT
 
 const JWT_TOKEN_EXPIRATION_TIME = "1h";
@@ -19,9 +29,10 @@ const JWT_HTTP_SECURED = process.env.NODE_ENV == "production";
 
 // Public routes
 
-const PUBLIC_ROUTES = ["/api/auth/sign-in", "/api/auth/create"];
+const PUBLIC_ROUTES = ["/api/user/sign-in", "/api/user/create", "/api-docs"];
 
 export {
+  ALLOWED_ORIGINS,
   JWT_HTTP_SECURED,
   JWT_REFRESH_TOKEN_EXPIRATION_TIME,
   JWT_TOKEN_EXPIRATION_TIME,
@@ -29,4 +40,5 @@ export {
   PORT,
   PUBLIC_ROUTES,
   swaggerDocs,
+  URL_SCHEME,
 };

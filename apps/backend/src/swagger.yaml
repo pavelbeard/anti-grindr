@@ -9,11 +9,11 @@ servers:
     description: "Development server"
 
 paths:
-  "/api/auth/create":
+  "/api/user/create":
     post:
       summary: "Create a new user"
       tags:
-        - Auth
+        - User
       requestBody:
         required: true
         content:
@@ -45,11 +45,11 @@ paths:
                     type: string
                     example: "Invalid input data"
 
-  "/api/auth/{id}":
+  "/api/user/{id}":
     get:
       summary: "Get user by ID"
       tags:
-        - Auth
+        - User
       parameters:
         - name: id
           in: path
@@ -65,6 +65,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unauthorized"
+        403:
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Forbidden"
         404:
           description: "User not found"
           content:
@@ -76,11 +96,11 @@ paths:
                     type: string
                     example: "User not found"
 
-  "/api/auth/{id}/update-email":
+  "/api/user/{id}/update-email":
     patch:
       summary: "Update user email"
       tags:
-        - Auth
+        - User
       requestBody:
         required: true
         content:
@@ -121,6 +141,16 @@ paths:
                   error:
                     type: string
                     example: "Unauthorized"
+        403:
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Forbidden"
         404:
           description: "User not found"
           content:
@@ -133,11 +163,11 @@ paths:
                     example: "User not found"
         
 
-  "/api/auth/{id}/update-password":
+  "/api/user/{id}/update-password":
     patch:
       summary: "Update user password"
       tags:
-        - Auth
+        - User
       requestBody:
         required: true
         content:
@@ -178,6 +208,16 @@ paths:
                   error:
                     type: string
                     example: "Unauthorized"
+        403:
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Forbidden"
         404:
           description: "User not found"
           content:

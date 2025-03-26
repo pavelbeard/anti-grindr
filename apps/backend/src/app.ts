@@ -1,7 +1,8 @@
-import protectMiddleware from "@/lib/auth/protect-middleware.ts";
 import errorFallback from "@/lib/error-fallback.ts";
-import authRouter from "@/routes/auth.ts";
+import { originResolver } from "@/middlewares/cors-middleware.ts";
+import { protectMiddleware } from "@/middlewares/user.ts";
 import messageRouter from "@/routes/message.ts";
+import usersRouter from "@/routes/user.ts";
 import { swaggerDocs } from "@/settings.ts";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -16,20 +17,8 @@ const app: express.Application = express();
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      const ACCEPTED_ORIGINS = [
-        "http://localhost:3000",
-        "https://localhost:5173",
-      ];
-
-      if (ACCEPTED_ORIGINS.includes(origin as string)) {
-        callback(null, true);
-      } else if (!origin) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
+    credentials: true,
+    origin: (origin, callback) => originResolver(origin, callback),
   })
 );
 
@@ -37,15 +26,15 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-app.use((req: Request, res: Response, next: NextFunction) =>
-  protectMiddleware(req, res, next)
-);
-
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.disable("x-powered-by");
 
 // jwt
+
+app.use((req: Request, res: Response, next: NextFunction) =>
+  protectMiddleware(req, res, next)
+);
 
 // error handler
 app.use((err: unknown, req: Request, res: Response, next: NextFunction) =>
@@ -54,7 +43,11 @@ app.use((err: unknown, req: Request, res: Response, next: NextFunction) =>
 
 // routers
 
-app.use("/api/auth", authRouter);
-app.use("/api/messages", messageRouter);
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello World!");
+});
+
+app.use("/api/user", usersRouter);
+app.use("/api/message", messageRouter);
 
 export default app;
