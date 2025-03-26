@@ -1,12 +1,11 @@
-import { UnauthorizedError } from "@/errors/auth.ts";
 import { NODE_JWT_SECRET_KEY, PUBLIC_ROUTES } from "@/settings.ts";
-import { Session } from "@/types/auth.ts";
+import { Session } from "@/types/user.ts";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 const routeIsPublic = (route: string) => PUBLIC_ROUTES.includes(route);
 
-export default function protectMiddleware(
+export function protectMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
@@ -22,7 +21,8 @@ export default function protectMiddleware(
   const token = req.cookies.__clientid;
 
   if (!token) {
-    throw new UnauthorizedError("__clientid is missing");
+    res.status(403).send("Unauthorized");
+    return;
   }
 
   try {
@@ -33,7 +33,8 @@ export default function protectMiddleware(
 
     res.session.user = data;
   } catch {
-    throw new UnauthorizedError("Invalid token");
+    res.status(401).send("Invalid token");
+    return;
   }
 
   next();

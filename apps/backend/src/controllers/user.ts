@@ -5,19 +5,20 @@ import {
   UpdateEmailError,
   UpdatePasswordError,
   UserNotFoundError,
-} from "@/errors/auth.ts";
+} from "@/errors/user.ts";
 import prisma from "@/lib/prisma.ts";
 import {
   createUserSchema,
+  signInUserSchema,
   updateEmailSchema,
   updatePasswordSchema,
-} from "@/schemas/auth.ts";
+} from "@/schemas/user.ts";
 import type {
   CreateUser,
   SignInUser,
   UpdateEmail,
   UpdatePassword,
-} from "@/types/auth.ts";
+} from "@/types/user.ts";
 import bcrypt from "@node-rs/bcrypt";
 
 // TODO: implement Oauth2 flow
@@ -154,7 +155,7 @@ class AuthController {
   }
 
   static async signIn(data: SignInUser) {
-    const validatedObject = createUserSchema.safeParse(data);
+    const validatedObject = signInUserSchema.safeParse(data);
 
     if (!validatedObject.success) {
       throw new SignInError(validatedObject.error.message);

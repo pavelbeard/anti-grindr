@@ -1,18 +1,18 @@
-import { AuthController } from "@/controllers/auth.ts";
-import createToken from "@/lib/auth/create-token.ts";
+import { AuthController } from "@/controllers/user.ts";
+import createToken from "@/lib/user/create-token.ts";
 import { JWT_HTTP_SECURED } from "@/settings.ts";
 import {
   CreateUser,
   SignInUser,
   UpdateEmail,
   UpdatePassword,
-} from "@/types/auth.ts";
+} from "@/types/user.ts";
 import type { Request, Response } from "express";
 import { Router } from "express";
 
 const authRouter: Router = Router();
 
-authRouter.post("/sing-in", async (req: Request, res: Response) => {
+authRouter.post("/sign-in", async (req: Request, res: Response) => {
   const user = await AuthController.signIn(req.body as SignInUser);
   const token = createToken(user);
 
