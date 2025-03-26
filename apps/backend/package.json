@@ -4,7 +4,7 @@
   "type": "module",
   "description": "",
   "scripts": {
-    "dev": "tsx watch --include ./swagger.yaml ./src/server.ts",
+    "dev": "NODE_ENV=development tsx watch --include ./swagger.yaml ./src/server.ts",
     "build": "tsc",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write src",
