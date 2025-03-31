@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const passwordSchema = z
+const PasswordSchema = z
   .string()
   .min(8, { message: "Password must be at least 8 characters long" })
   .regex(/[A-Z]/, {
@@ -11,15 +11,15 @@ const passwordSchema = z
     message: "Password must contain at least one symbol",
   });
 
-const createUserSchema = z.object({
+const CreateUserSchema = z.object({
   email: z
     .string()
     .email()
     .min(8, { message: "Email must be at least 8 characters long" }),
-  password: passwordSchema,
+  password: PasswordSchema,
 });
 
-const updateEmailSchema = z.object({
+const UpdateEmailSchema = z.object({
   newEmail: z
     .string()
     .email()
@@ -27,25 +27,36 @@ const updateEmailSchema = z.object({
   actualPassword: z.string(),
 });
 
-const updatePasswordSchema = z
+const UpdatePasswordSchema = z
   .object({
     actualPassword: z.string(),
-    newPassword: passwordSchema,
-    repeatNewPassword: passwordSchema,
+    newPassword: PasswordSchema,
+    repeatNewPassword: PasswordSchema,
   })
   .refine((data) => data.newPassword === data.repeatNewPassword, {
     message: "Passwords don't match",
     path: ["repeatNewPassword"],
   });
 
-const signInUserSchema = z.object({
+const DeleteAccountSchema = z.object({
+  password: z.string(),
+});
+
+const SignInUserSchema = z.object({
   email: z.string().email(),
   password: z.string(),
 });
 
+const RefreshTokenSchema = z.object({
+  refreshToken: z.string(),
+});
+
 export {
-  createUserSchema,
-  signInUserSchema,
-  updateEmailSchema,
-  updatePasswordSchema,
+  CreateUserSchema,
+  DeleteAccountSchema,
+  RefreshTokenSchema,
+  SignInUserSchema,
+  UpdateEmailSchema,
+  UpdatePasswordSchema
 };
+

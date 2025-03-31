@@ -5,6 +5,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [tsconfigpaths()],
   test: {
+    include: ["./src/**/*.test.ts"],
     alias: {
       "@/*": new URL("./src/*", import.meta.url).pathname,
     },

@@ -1,4 +1,4 @@
-import { createProfile } from "@/controllers/profile.ts";
+import { createProfile } from "@/profile/profile.controller.ts";
 import { User } from "@prisma/client";
 import type { Request, Response } from "express";
 import { Router } from "express";
