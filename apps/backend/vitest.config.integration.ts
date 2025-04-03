@@ -5,8 +5,13 @@ import tsconfigpaths from 'vite-tsconfig-paths'
 export default defineConfig({
   plugins: [tsconfigpaths()],
   test: {
-    include: ['./src/**/*.test.ts'],
-    exclude: ['./tests/**/*.test.ts'],
+    poolOptions: {
+      threads: {
+        maxThreads: 0
+      }
+    },
+    include: ['./src/tests/**/*.test.ts'],
+    setupFiles: ['./src/tests/helpers/setup.ts'],
     alias: {
       lib: '/src/lib',
       user: '/src/user'

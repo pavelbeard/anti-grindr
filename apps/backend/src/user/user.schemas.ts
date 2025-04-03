@@ -15,45 +15,71 @@ const PasswordSchema = z
   })
 
 const CreateUserSchema = z.object({
-  email: z
-    .string({
-      required_error: 'Email is required'
-    })
-    .email()
-    .min(8, { message: 'Email must be at least 8 characters long' }),
-  password: PasswordSchema
+  body: z.object({
+    email: z
+      .string({
+        required_error: 'Email is required'
+      })
+      .email()
+      .min(8, { message: 'Email must be at least 8 characters long' }),
+    password: PasswordSchema
+  })
 })
 
 const UpdateEmailSchema = z.object({
-  newEmail: z
-    .string()
-    .email()
-    .min(8, { message: 'Email must be at least 8 characters long' }),
-  actualPassword: z.string()
+  body: z.object({
+    newEmail: z
+      .string()
+      .email()
+      .min(8, { message: 'Email must be at least 8 characters long' }),
+    actualPassword: z.string()
+  }),
+  params: z.object({
+    id: z.string()
+  })
 })
 
-const UpdatePasswordSchema = z
-  .object({
-    actualPassword: z.string(),
-    newPassword: PasswordSchema,
-    repeatNewPassword: PasswordSchema
+const UpdatePasswordSchema = z.object({
+  body: z
+    .object({
+      actualPassword: z.string(),
+      newPassword: PasswordSchema,
+      repeatNewPassword: PasswordSchema
+    })
+    .refine((data) => data.newPassword === data.repeatNewPassword, {
+      message: "Passwords don't match",
+      path: ['repeatNewPassword']
+    }),
+  params: z.object({
+    id: z.string()
   })
-  .refine((data) => data.newPassword === data.repeatNewPassword, {
-    message: "Passwords don't match",
-    path: ['repeatNewPassword']
-  })
+})
 
 const DeleteAccountSchema = z.object({
-  password: z.string()
+  body: z.object({
+    password: z.string()
+  }),
+  params: z.object({
+    id: z.string()
+  })
 })
 
 const SignInUserSchema = z.object({
-  email: z.string().email(),
-  password: z.string()
+  body: z.object({
+    email: z
+      .string({
+        required_error: 'Email is required'
+      })
+      .email()
+      .min(8, { message: 'Email must be at least 8 characters long' }),
+    password: PasswordSchema
+  })
 })
 
 const RefreshTokenSchema = z.object({
-  refreshToken: z.string()
+  body: z.object({
+    refreshToken: z.string()
+  })
 })
 
 export {

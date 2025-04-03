@@ -14,4 +14,11 @@ jobs:
       - uses: ./.github/actions/build
       - name: Run unit tests
         run: pnpm --filter=backend run test:unit
+  integration-test-backend:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build
+      - name: Run integration tests
+        run: pnpm --filter=backend run test:int
     

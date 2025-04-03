@@ -11,7 +11,9 @@
     "format": "prettier --write .",
     "check-types": "tsc --noEmit",
     "test:unit": "vitest -c ./vitest.config.unit.ts",
-    "test:unit:ui": "vitest -c ./vitest.config.unit.ts --ui"
+    "test:unit:ui": "vitest -c ./vitest.config.unit.ts --ui",
+    "test:int": "./scripts/run-integration.sh",
+    "test:int:ui": "./scripts/run-integration.sh --ui"
   },
   "keywords": [],
   "author": "",
