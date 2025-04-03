@@ -51,6 +51,7 @@
     "jest-mock-extended": "4.0.0-beta1",
     "mongodb-memory-server": "^10.1.4",
     "prisma": "^6.5.0",
+    "supertest": "^7.1.0",
     "ts-jest": "^29.2.6",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",

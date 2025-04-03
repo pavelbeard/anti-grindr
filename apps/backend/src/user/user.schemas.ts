@@ -1,8 +1,11 @@
 import { z } from "zod";
 
 const PasswordSchema = z
-  .string()
+  .string({
+    required_error: "Password is required",
+  })
   .min(8, { message: "Password must be at least 8 characters long" })
+  .max(32, { message: "Password must be at most 32 characters long" })
   .regex(/[A-Z]/, {
     message: "Password must contain at least one uppercase letter",
   })
@@ -13,7 +16,9 @@ const PasswordSchema = z
 
 const CreateUserSchema = z.object({
   email: z
-    .string()
+    .string({
+      required_error: "Email is required",
+    })
     .email()
     .min(8, { message: "Email must be at least 8 characters long" }),
   password: PasswordSchema,
@@ -57,6 +62,5 @@ export {
   RefreshTokenSchema,
   SignInUserSchema,
   UpdateEmailSchema,
-  UpdatePasswordSchema
+  UpdatePasswordSchema,
 };
-

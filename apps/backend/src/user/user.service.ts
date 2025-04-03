@@ -2,10 +2,8 @@ import prisma from "@/lib/prisma.ts";
 import {
   JWT_REFRESH_TOKEN_EXPIRATION_TIME,
   JWT_TOKEN_EXPIRATION_TIME,
-  NODE_JWT_REFRESH_SECRET_KEY,
-  NODE_JWT_SECRET_KEY,
 } from "@/settings.ts";
-import { CreateUserSchema } from "@/user/user.types.ts";
+import { CreateUserSchema, PublicUser } from "@/user/user.types.ts";
 import bcrypt from "@node-rs/bcrypt";
 import { User } from "@prisma/client";
 import jwt from "jsonwebtoken";
@@ -13,9 +11,12 @@ import jwt from "jsonwebtoken";
 export const createUser = async (user: CreateUserSchema) => {
   user.password = bcrypt.hashSync(user.password, 10);
 
-  return await prisma.user.create({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { refreshToken, password, ...createdUser } = await prisma.user.create({
     data: user,
   });
+
+  return createdUser
 };
 
 export const findUserById = async (id: string) => {
@@ -47,29 +48,61 @@ export const updateUser = async (id: string, data: User) => {
   });
 };
 
+export const updateUserEmail = async (id: string, email: string) => {
+  return await prisma.user.update({
+    where: { id },
+    data: { email },
+  });
+};
+
+export const updateUserPassword = async (id: string, password: string) => {
+  return await prisma.user.update({
+    where: { id },
+    data: { password },
+  });
+};
+
 export const deleteUser = async (id: string) => {
   return await prisma.user.delete({
     where: { id },
   });
 };
 
-export const comparePassword = (input: string, encrypted: string) => {
-  return bcrypt.compareSync(input, encrypted);
-};
+export const createJWT = (payload: PublicUser) => {
+  if (!process.env.JWT_SECRET_KEY) {
+    throw new Error("JWT_SECRET_KEY is not defined");
+  }
 
-export const createToken = (payload: Omit<User, "password">) => {
-  return jwt.sign(payload, NODE_JWT_SECRET_KEY as string, {
+  return jwt.sign({ ...payload }, process.env.JWT_SECRET_KEY, {
     expiresIn: JWT_TOKEN_EXPIRATION_TIME,
   });
 };
 
-export const createRefreshToken = (userId: User["id"]) => {
-  return jwt.sign({ id: userId }, NODE_JWT_REFRESH_SECRET_KEY as string, {
+export const createRefreshToken = async (userId: User["id"]) => {
+  if (!process.env.JWT_REFRESH_SECRET_KEY) {
+    throw new Error("JWT_REFRESH_SECRET_KEY is not defined");
+  }
+
+  const token = jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET_KEY, {
     expiresIn: JWT_REFRESH_TOKEN_EXPIRATION_TIME,
   });
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      refreshToken: {
+        push: token,
+      },
+    },
+  });
+
+  return token;
 };
 
-export const deleteRefreshToken = async (existingUser: User, refreshToken: string) => {
+export const deleteRefreshToken = async (
+  existingUser: User,
+  refreshToken: string
+) => {
   return await prisma.user.update({
     where: { id: existingUser.id },
     data: {
@@ -82,10 +115,23 @@ export const deleteRefreshToken = async (existingUser: User, refreshToken: strin
   });
 };
 
-export const omitSecretFields = (
-  user: User
-): Omit<User, "password" | "refreshToken"> => {
+export const omitSecretFields = (user: User): PublicUser => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { password, refreshToken, ...publicUser } = user;
+  const { password, refreshToken, role, ...publicUser } = user;
   return publicUser;
+};
+
+export const validateJWT = (token: string) => {
+  if (!process.env.JWT_SECRET_KEY) {
+    throw new Error("JWT_SECRET_KEY is not defined");
+  }
+
+  const payload = jwt.verify(token, process.env.JWT_SECRET_KEY) as {
+    id: string;
+  };
+  return payload.id;
+};
+
+export const comparePassword = (input: string, encrypted: string) => {
+  return bcrypt.compareSync(input, encrypted);
 };

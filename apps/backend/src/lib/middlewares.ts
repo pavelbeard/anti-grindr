@@ -1,33 +1,39 @@
 import { StaticOrigin } from "@/lib/types.ts";
 import { AppError } from "@/lib/utility-classes.ts";
-import {
-  ALLOWED_ORIGINS,
-  NODE_JWT_SECRET_KEY,
-  PUBLIC_ROUTES,
-} from "@/settings.ts";
+// import {
+// Public routes are disabled for now
+// PUBLIC_ROUTES,
+// } from "@/settings.ts";
 import { Session } from "@/user/user.types.ts";
 import type { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
 import { ZodError, type AnyZodObject } from "zod";
+import * as AuthService from "@/user/user.service.ts";
 
-const routeIsPublic = (route: string) => PUBLIC_ROUTES.includes(route);
+// Public routes are disabled for now
+// const routeIsPublic = (route: string) => PUBLIC_ROUTES.includes(route);
 
-export function authorization(
+export const authorization = (
   req: Request<unknown>,
   res: Response,
   next: NextFunction
-) {
+) => {
   res.session = {
-    user: null,
+    userId: null,
   };
 
   if (req.method === "OPTIONS") {
-    return res.send({ message: "Preflight checked successfully." });
+    res.send({ message: "Preflight checked successfully." });
+    return;
   }
 
-  if (routeIsPublic(req.path)) {
-    return next();
+  if (!process.env.JWT_SECRET_KEY) {
+    return next(new AppError("unauthorized", "JWT secret key is not defined."));
   }
+
+  // Public routes are disabled for now
+  // if (routeIsPublic(req.path)) {
+  //   return next();
+  // }
 
   if (!req.headers.authorization) {
     return next(
@@ -47,42 +53,40 @@ export function authorization(
   }
 
   try {
-    const data = jwt.verify(
-      token,
-      NODE_JWT_SECRET_KEY as string
-    ) as Session["user"];
+    const data = AuthService.validateJWT(token) as Session["userId"];
 
-    res.session.user = data;
+    res.session.userId = data;
     next();
   } catch {
     return next(new AppError("forbidden", "Token expired or invalid."));
   }
-}
+};
 
-export function originResolver(
+export const originResolver = (
+  allowedOrigins: string[],
   origin: string | undefined,
   callback: (err: Error | null, origin?: StaticOrigin) => void
-) {
-  if (ALLOWED_ORIGINS.indexOf(origin as string) !== -1) {
+) => {
+  if (allowedOrigins.indexOf(origin as string) !== -1) {
     callback(null, true);
   } else if (!origin) {
     return callback(null, true);
   }
 
   return callback(new AppError("badRequest", "Not allowed by CORS"));
-}
+};
 
-export function errorFallback(
+export const errorFallback = (
   err: Error,
   _: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction
-) {
+) => {
   res.status("statusCode" in err ? (err.statusCode as number) : 500).json({
     message: err instanceof AppError ? err.message : "Internal Server Error",
   });
-}
+};
 
 export const validate =
   (schema: AnyZodObject) =>

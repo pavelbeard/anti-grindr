@@ -4,8 +4,8 @@ import {
   originResolver,
 } from "@/lib/middlewares.ts";
 import messageRouter from "@/message/message.routes.ts";
-import { swaggerDocs } from "@/settings.ts";
-import usersRouter from "@/user/user.routes.ts";
+import { ALLOWED_ORIGINS, swaggerDocs } from "@/settings.ts";
+import usersRouter from "@/user/user.router.ts";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { config } from "dotenv";
@@ -19,7 +19,8 @@ const app: express.Express = express();
 app.use(
   cors({
     credentials: true,
-    origin: (origin, callback) => originResolver(origin, callback),
+    origin: (origin, callback) =>
+      originResolver(ALLOWED_ORIGINS, origin, callback),
   })
 );
 app.use(express.json());

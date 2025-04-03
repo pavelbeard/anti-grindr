@@ -10,21 +10,12 @@ import {
 } from "./user.schemas.ts";
 
 export interface Session {
-  user: {
-    id: string;
-    email: string;
-  } | null;
+  userId: string | null;
 }
 
 export type CreateUserSchema = z.infer<typeof CreateUserSchema>;
 
-export interface PublicUser {
-  id: string;
-  email: string;
-  role: User["role"];
-  createdAt: User["createdAt"];
-  updatedAt: User["updatedAt"];
-}
+export type PublicUser = Omit<User, "password" | "refreshToken" | "role">;
 
 export type UpdateEmailSchema = z.infer<typeof UpdateEmailSchema>;
 export type UpdatePasswordSchema = z.infer<typeof UpdatePasswordSchema>;

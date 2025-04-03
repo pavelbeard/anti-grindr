@@ -7,7 +7,9 @@ export default defineConfig({
   test: {
     include: ["./src/**/*.test.ts"],
     alias: {
-      "@/*": new URL("./src/*", import.meta.url).pathname,
+      "lib": "/src/lib",
+      "user": "/src/user",
+      
     },
     env: {
       ...config({ path: "./.testing.env" }).parsed,

@@ -2,13 +2,14 @@ import { AppError } from "@/lib/utility-classes.ts";
 import { JWT_HTTP_SECURED } from "@/settings.ts";
 import * as AuthService from "@/user/user.service.ts";
 import { CreateUserSchema, SignInUserSchema } from "@/user/user.types.ts";
-import type { Request, RequestHandler, Response } from "express";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
 
 // TODO: implement Oauth2 flow
 
 export const signUp: RequestHandler = async (
   req: Request<unknown, unknown, CreateUserSchema>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const userData = {
     email: req.body.email,
@@ -16,36 +17,35 @@ export const signUp: RequestHandler = async (
   };
 
   if (await AuthService.findUserByEmail(userData.email)) {
-    throw new AppError("validation", "User already exists.");
+    return next(new AppError("validation", "User already exists."));
   }
 
-  const newUser = await AuthService.createUser(userData);
+  const user = await AuthService.createUser(userData);
 
-  res
-    .status(201)
-    .json({ message: "User created successfully.", user: newUser });
+  res.status(201).json({ message: "User created successfully.", user });
 };
 
 export const signIn: RequestHandler = async (
   req: Request<unknown, unknown, SignInUserSchema>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const { email, password } = req.body;
 
   const existingUser = await AuthService.findUserByEmail(email);
 
   if (!existingUser) {
-    throw new AppError("notFound", "User not found.");
+    return next(new AppError("notFound", "User not found."));
   }
 
   if (!AuthService.comparePassword(password, existingUser.password)) {
-    throw new AppError("validation", "Password is wrong.");
+    return next(new AppError("validation", "Password is wrong."));
   }
 
-  const token = AuthService.createToken(existingUser);
-  const refreshToken = AuthService.createRefreshToken(existingUser.id);
-
   const publicUser = AuthService.omitSecretFields(existingUser);
+
+  const token = AuthService.createJWT(publicUser);
+  const refreshToken = await AuthService.createRefreshToken(publicUser.id);
 
   res
     .status(200)
@@ -57,16 +57,21 @@ export const signIn: RequestHandler = async (
     .json({ user: publicUser, token });
 };
 
-export const signOut: RequestHandler = async (req: Request, res: Response) => {
+export const signOut: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const refreshToken = req.cookies["__rclientid"];
+
   if (!refreshToken) {
-    throw new AppError("validation", "Refresh token not found.");
+    return next(new AppError("validation", "Refresh token not found."));
   }
 
   const existingUser = await AuthService.findByRefreshToken(refreshToken);
 
   if (!existingUser) {
-    throw new AppError("notFound", "User not found.");
+    return next(new AppError("notFound", "User not found."));
   }
 
   await AuthService.deleteRefreshToken(existingUser, refreshToken);
@@ -79,22 +84,25 @@ export const signOut: RequestHandler = async (req: Request, res: Response) => {
 
 export const refreshToken: RequestHandler = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const refreshToken = req.cookies["__rclientid"];
 
   if (!refreshToken) {
-    throw new AppError("validation", "Refresh token not found.");
+    return next(new AppError("validation", "Refresh token not found."));
   }
 
   const existingUser = await AuthService.findByRefreshToken(refreshToken);
 
   if (!existingUser) {
-    throw new AppError("notFound", "User not found.");
+    return next(new AppError("notFound", "User not found."));
   }
 
-  const token = AuthService.createToken(existingUser);
-  const newRefreshToken = AuthService.createRefreshToken(existingUser.id);
+  const publicUser = AuthService.omitSecretFields(existingUser);
+
+  const token = AuthService.createJWT(publicUser);
+  const newRefreshToken = await AuthService.createRefreshToken(publicUser.id);
 
   res
     .status(200)
@@ -106,11 +114,15 @@ export const refreshToken: RequestHandler = async (
     .json({ token });
 };
 
-export const getUser: RequestHandler = async (req: Request, res: Response) => {
+export const getUser: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const user = await AuthService.findUserById(req.params.id);
 
   if (!user) {
-    throw new AppError("notFound", "User not found.");
+    return next(new AppError("notFound", "User not found."));
   }
 
   const publicUser = AuthService.omitSecretFields(user);
@@ -120,7 +132,8 @@ export const getUser: RequestHandler = async (req: Request, res: Response) => {
 
 export const updateEmail: RequestHandler = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const userData = {
     id: req.params.id,
@@ -131,23 +144,17 @@ export const updateEmail: RequestHandler = async (
   const existingUser = await AuthService.findUserById(userData.id);
 
   if (!existingUser) {
-    throw new AppError("notFound", "User not found.");
+    return next(new AppError("notFound", "User not found."));
   }
 
-  const userPassword = AuthService.comparePassword(
-    userData.actualPassword,
-    existingUser.password
-  );
-
-  if (!userPassword) {
-    throw new AppError("validation", "Actual password is wrong.");
+  if (
+    !AuthService.comparePassword(userData.actualPassword, existingUser.password)
+  ) {
+    return next(new AppError("validation", "Actual password is wrong."));
   }
 
   const updatedUser = AuthService.omitSecretFields(
-    await AuthService.updateUser(userData.id, {
-      ...existingUser,
-      email: userData.newEmail,
-    })
+    await AuthService.updateUserEmail(userData.id, userData.newEmail)
   );
 
   res
@@ -157,7 +164,8 @@ export const updateEmail: RequestHandler = async (
 
 export const updatePassword: RequestHandler = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const userData = {
     id: req.params.id,
@@ -168,7 +176,7 @@ export const updatePassword: RequestHandler = async (
   const existingUser = await AuthService.findUserById(userData.id);
 
   if (!existingUser) {
-    throw new AppError("notFound", "User not found.");
+    return next(new AppError("notFound", "User not found."));
   }
 
   const userPassword = AuthService.comparePassword(
@@ -177,27 +185,23 @@ export const updatePassword: RequestHandler = async (
   );
 
   if (!userPassword) {
-    throw new AppError("validation", "Actual password is wrong.");
+    return next(new AppError("validation", "Actual password is wrong."));
   }
 
   const updatedUser = AuthService.omitSecretFields(
-    await AuthService.updateUser(userData.id, {
-      ...existingUser,
-      password: userData.newPassword,
-    })
+    await AuthService.updateUserPassword(userData.id, userData.newPassword)
   );
 
-  res
-    .status(200)
-    .json({
-      message: "User password updated successfully.",
-      user: updatedUser,
-    });
+  res.status(200).json({
+    message: "User password updated successfully.",
+    user: updatedUser,
+  });
 };
 
 export const deleteAccount: RequestHandler = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const userData = {
     id: req.params.id,
@@ -207,7 +211,7 @@ export const deleteAccount: RequestHandler = async (
   const existingUser = await AuthService.findUserById(userData.id);
 
   if (!existingUser) {
-    throw new AppError("notFound", "User not found.");
+    return next(new AppError("notFound", "User not found."));
   }
 
   const userPassword = AuthService.comparePassword(
@@ -216,7 +220,7 @@ export const deleteAccount: RequestHandler = async (
   );
 
   if (!userPassword) {
-    throw new AppError("validation", "Actual password is wrong.");
+    return next(new AppError("validation", "Actual password is wrong."));
   }
 
   await AuthService.deleteUser(userData.id);
