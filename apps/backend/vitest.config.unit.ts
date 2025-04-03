@@ -5,8 +5,7 @@ import tsconfigpaths from 'vite-tsconfig-paths'
 export default defineConfig({
   plugins: [tsconfigpaths()],
   test: {
-    include: ['./src/**/*.test.ts'],
-    exclude: ['./tests/**/*.test.ts'],
+    include: ['./src/**/*.test.ts', '!src/tests'],
     alias: {
       lib: '/src/lib',
       user: '/src/user'
