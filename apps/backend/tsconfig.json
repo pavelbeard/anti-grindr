@@ -1,7 +1,5 @@
 {
-  "exclude": [
-    "tests/**/*"
-  ],
+  "exclude": ["tests/**/*"],
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
@@ -28,7 +26,7 @@
     "noImplicitThis": true,
     /* Paths */
     "paths": {
-      "@/*": ["./src/*", "./src/lib/__mocks__/context.ts"],
-    },  
+      "@/*": ["./src/*", "./src/lib/__mocks__/context.ts"]
+    }
   }
 }

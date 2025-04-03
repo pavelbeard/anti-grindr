@@ -1,5 +1,5 @@
 export class AppError extends Error {
-  statusCode = 400;
+  statusCode = 400
 
   static typeToCode = {
     badRequest: 400,
@@ -8,14 +8,14 @@ export class AppError extends Error {
     forbidden: 403,
     notFound: 404,
     conflict: 409,
-    server: 500,
-  };
+    server: 500
+  }
 
-  constructor(type: keyof typeof AppError.typeToCode, message: string) {
-    super(message);
-    Object.setPrototypeOf(this, new.target.prototype);
-    this.name = Error.name;
-    this.statusCode = AppError.typeToCode[type];
-    Error.captureStackTrace(this);
+  constructor (type: keyof typeof AppError.typeToCode, message: string) {
+    super(message)
+    Object.setPrototypeOf(this, new.target.prototype)
+    this.name = Error.name
+    this.statusCode = AppError.typeToCode[type]
+    Error.captureStackTrace(this)
   }
 }

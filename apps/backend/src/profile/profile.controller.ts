@@ -1,90 +1,90 @@
-import prisma from "@/lib/prisma.ts";
-import type { Profile, User } from "@prisma/client";
-import type { Request, Response } from "express";
+import prisma from '@/lib/prisma.ts'
+import type { Profile, User } from '@prisma/client'
+import type { Request, Response } from 'express'
 
 // TODO: Implement gender, pronoun, picture, album logic
 
 class ProfileController {
-  async getProfile(id: User["id"]) {
+  async getProfile (id: User['id']) {
     const result = await prisma.profile.findUnique({
       where: { userId: id },
       include: {
         genders: true,
         pronouns: true,
-        pictures: { orderBy: { order: "asc" } },
-        albums: { orderBy: { order: "asc" } },
-      },
-    });
+        pictures: { orderBy: { order: 'asc' } },
+        albums: { orderBy: { order: 'asc' } }
+      }
+    })
 
-    if (!result) {
-      throw new Error("Profile not found");
+    if (result == null) {
+      throw new Error('Profile not found')
     }
 
-    return result;
+    return result
   }
 }
 
-export { ProfileController };
+export { ProfileController }
 
-export const createProfile = async (id: User["id"]) => {
+export const createProfile = async (id: User['id']) => {
   const profile: Profile | null = await prisma.profile.create({
     data: {
-      userId: id,
-    },
-  });
+      userId: id
+    }
+  })
 
   if (!profile) {
-    throw new Error("Profile not created");
+    throw new Error('Profile not created')
   }
 
-  return profile;
-};
+  return profile
+}
 
 export const getProfile = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params
     const profile: Profile | null = await prisma.profile.findUnique({
       where: { userId: id },
       include: {
         genders: true,
         pronouns: true,
-        pictures: { orderBy: { order: "asc" } },
-        albums: { orderBy: { order: "asc" } },
-      },
-    });
+        pictures: { orderBy: { order: 'asc' } },
+        albums: { orderBy: { order: 'asc' } }
+      }
+    })
 
-    if (!profile) {
-      res.status(404).json({ error: "Profile not found " });
+    if (profile == null) {
+      res.status(404).json({ error: 'Profile not found ' })
     }
 
-    res.status(200).json(profile);
+    res.status(200).json(profile)
   } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' })
+    console.error(err)
   }
-};
+}
 
 export const updateProfile = async (req: Request, res: Response) => {
   try {
-    const { name, age, bio, sexRole } = req.body;
-    const { id } = req.params;
+    const { name, age, bio, sexRole } = req.body
+    const { id } = req.params
     const updatedProfile: Profile | null = await prisma.profile.update({
       where: { userId: id },
       data: {
         name,
         age: age ? Number(age) : undefined,
         bio,
-        sexRole,
-      },
-    });
+        sexRole
+      }
+    })
 
     if (!updatedProfile) {
-      res.status(404).json({ error: "Profile not found" });
+      res.status(404).json({ error: 'Profile not found' })
     }
 
-    res.status(200).json(updatedProfile);
+    res.status(200).json(updatedProfile)
   } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' })
+    console.error(err)
   }
-};
+}

@@ -1,5 +1,5 @@
-import { it, describe } from "vitest";
+import { it, describe } from 'vitest'
 
-describe("profile.controller", () => {
-  it("");
-});
+describe('profile.controller', () => {
+  it('')
+})
