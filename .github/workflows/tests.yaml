@@ -1,0 +1,17 @@
+name: Anti-Grindr CI
+
+on:
+  push:
+    branches:
+      - main
+      - ci-cd
+
+jobs:
+  unit-test-backend:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build
+      - name: Run unit tests
+        run: pnpm --filter=backend run test:unit
+    

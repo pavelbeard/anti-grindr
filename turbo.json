@@ -45,13 +45,14 @@
                 "./coverage/**"
             ]
         },
-        "test:vitest": {
+        "format": {
             "inputs": [
-                "./src/**",
-                "./tests/**"
+                "src/**/*.{ts,js,tsx,jsx}",
+                "tests/**/*.{ts,js,tsx,jsx}"
             ],
             "outputs": [
-                "./coverage/**"
+                "src/**/*.{ts,js,tsx,jsx}",
+                "tests/**/*.{ts,js,tsx,jsx}"
             ]
         }
     }
