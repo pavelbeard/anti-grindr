@@ -1,4 +1,3 @@
-import { config } from 'dotenv'
 import { defineConfig } from 'vitest/config'
 import tsconfigpaths from 'vite-tsconfig-paths'
 
@@ -17,7 +16,11 @@ export default defineConfig({
       user: '/src/user'
     },
     env: {
-      ...config({ path: './.testing.env' }).parsed
+      JWT_SECRET_KEY: 'change_me',
+      JWT_REFRESH_SECRET_KEY: 'refresh_me',
+      NODE_ENV: 'testing',
+      DATABASE_URL:
+        'postgresql://postgres:postgres@localhost:5435/postgres?schema=public'
     }
   }
 })
