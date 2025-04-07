@@ -5,6 +5,7 @@ import * as AuthService from './user.service.ts'
 import { User } from '@prisma/client'
 import { AppError } from '@/lib/utility-classes.ts'
 import { JWT_HTTP_SECURED } from '@/settings.ts'
+import { UpdateEmailSchema, UpdatePasswordSchema } from './user.types.ts'
 
 vi.mock('user/user.service', () => ({
   createUser: vi.fn(),
@@ -25,7 +26,7 @@ vi.mock('user/user.service', () => ({
 
 vi.mock('lib/utility-classes', () => ({
   AppError: class {
-    constructor (
+    constructor(
       public type: string,
       public message: string
     ) {}
@@ -412,7 +413,15 @@ describe('user.controller', () => {
     it('should throw an error if user not found.', async () => {
       vi.mocked(AuthService.findUserById).mockResolvedValueOnce(null)
 
-      await AuthController.updateEmail(request, response, next)
+      await AuthController.updateEmail(
+        request as Request<
+          UpdateEmailSchema['params'],
+          unknown,
+          UpdateEmailSchema['body']
+        >,
+        response,
+        next
+      )
 
       expect(next).toHaveBeenCalled()
       expect(next.mock.calls[0][0]).toBeInstanceOf(AppError)
@@ -434,7 +443,15 @@ describe('user.controller', () => {
         updatedAt: new Date()
       })
 
-      await AuthController.updateEmail(request, response, next)
+      await AuthController.updateEmail(
+        request as Request<
+          UpdateEmailSchema['params'],
+          unknown,
+          UpdateEmailSchema['body']
+        >,
+        response,
+        next
+      )
 
       expect(next).toHaveBeenCalled()
       expect(next.mock.calls[0][0]).toBeInstanceOf(AppError)
@@ -478,7 +495,15 @@ describe('user.controller', () => {
         updatedAt: new Date()
       })
 
-      await AuthController.updateEmail(request, response, next)
+      await AuthController.updateEmail(
+        request as Request<
+          UpdateEmailSchema['params'],
+          unknown,
+          UpdateEmailSchema['body']
+        >,
+        response,
+        next
+      )
 
       expect(response.status).toHaveBeenCalledWith(200)
       expect(response.json).toHaveBeenCalledWith({
@@ -506,7 +531,15 @@ describe('user.controller', () => {
     it('should throw an error if user not found.', async () => {
       vi.mocked(AuthService.findUserById).mockResolvedValueOnce(null)
 
-      await AuthController.updatePassword(request, response, next)
+      await AuthController.updatePassword(
+        request as Request<
+          UpdatePasswordSchema['params'],
+          unknown,
+          UpdatePasswordSchema['body']
+        >,
+        response,
+        next
+      )
 
       expect(next).toHaveBeenCalled()
       expect(next.mock.calls[0][0]).toBeInstanceOf(AppError)
@@ -528,7 +561,15 @@ describe('user.controller', () => {
         updatedAt: new Date()
       })
 
-      await AuthController.updatePassword(request, response, next)
+      await AuthController.updatePassword(
+        request as Request<
+          UpdatePasswordSchema['params'],
+          unknown,
+          UpdatePasswordSchema['body']
+        >,
+        response,
+        next
+      )
 
       expect(next).toHaveBeenCalled()
       expect(next.mock.calls[0][0]).toBeInstanceOf(AppError)
@@ -539,6 +580,7 @@ describe('user.controller', () => {
     it("should update the user's password.", async () => {
       request.body.actualPassword = 'hashed_random_password'
       request.body.newPassword = 'new_password'
+      request.body.repeatNewPassword = 'new_password'
 
       vi.mocked(AuthService.findUserById).mockResolvedValueOnce({
         id: '1',
@@ -572,7 +614,14 @@ describe('user.controller', () => {
         updatedAt: new Date()
       })
 
-      await AuthController.updatePassword(request, response, next)
+      await AuthController.updatePassword(
+        request as Request<
+          UpdatePasswordSchema['params'],
+          unknown,
+          UpdatePasswordSchema['body']>,
+        response,
+        next
+      )
 
       expect(response.status).toHaveBeenCalledWith(200)
       expect(response.json).toHaveBeenCalledWith({
