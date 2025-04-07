@@ -1,7 +1,13 @@
 import { AppError } from '@/lib/utility-classes.ts'
 import { JWT_HTTP_SECURED } from '@/settings.ts'
 import * as AuthService from '@/user/user.service.ts'
-import { CreateUserSchema, SignInUserSchema } from '@/user/user.types.ts'
+import {
+  CreateUserSchema,
+  RefreshTokenSchema,
+  SignInUserSchema,
+  UpdateEmailSchema,
+  UpdatePasswordSchema
+} from '@/user/user.types.ts'
 import type { NextFunction, Request, RequestHandler, Response } from 'express'
 
 // TODO: implement Oauth2 flow
@@ -83,7 +89,7 @@ export const signOut: RequestHandler = async (
 }
 
 export const refreshToken: RequestHandler = async (
-  req: Request,
+  req: Request<unknown, unknown, RefreshTokenSchema>,
   res: Response,
   next: NextFunction
 ) => {
@@ -130,8 +136,8 @@ export const getUser: RequestHandler = async (
   res.status(200).json({ user: publicUser })
 }
 
-export const updateEmail: RequestHandler = async (
-  req: Request,
+export const updateEmail: RequestHandler<UpdateEmailSchema['params']> = async (
+  req: Request<UpdateEmailSchema['params'], unknown, UpdateEmailSchema['body']>,
   res: Response,
   next: NextFunction
 ) => {
@@ -162,15 +168,22 @@ export const updateEmail: RequestHandler = async (
     .json({ message: 'User email updated successfully.', user: updatedUser })
 }
 
-export const updatePassword: RequestHandler = async (
-  req: Request,
+export const updatePassword: RequestHandler<
+  UpdatePasswordSchema['params']
+> = async (
+  req: Request<
+    UpdatePasswordSchema['params'],
+    unknown,
+    UpdatePasswordSchema['body']
+  >,
   res: Response,
   next: NextFunction
 ) => {
   const userData = {
     id: req.params.id,
     newPassword: req.body.newPassword,
-    actualPassword: req.body.actualPassword
+    actualPassword: req.body.actualPassword,
+    repeatNewPassword: req.body.repeatNewPassword
   }
 
   const existingUser = await AuthService.findUserById(userData.id)
@@ -186,6 +199,10 @@ export const updatePassword: RequestHandler = async (
 
   if (!userPassword) {
     return next(new AppError('validation', 'Actual password is wrong.'))
+  }
+
+  if (userData.newPassword !== userData.repeatNewPassword) {
+    return next(new AppError('validation', "Passwords don't match."))
   }
 
   const updatedUser = AuthService.omitSecretFields(
