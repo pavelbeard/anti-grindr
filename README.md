@@ -2,11 +2,33 @@
 
 An alternative to Grindr, which abuses its position, puts money above the user's interests. 
 
-## Landing 🤗
-<a href="https://github.com/pavelbeard/anti-grindr-landing" target="_blank">Link here</a>
+Now I'm working on MVP: 
 
-## Backend ⚙️
-<a href="https://github.com/pavelbeard/anti-grindr-backend" target="_blank">Link here</a>
+## backend
 
-## Frontend 🖥️
-<a href="https://github.com/pavelbeard/anti-grindr-frontend" target="_blank">Link here</a>
+- Create user [x]
+- Login [x]
+- Logout [x]
+- Refresh token []
+- Create profile []
+- Update profile []
+- Albums (private/public) []
+- Messagging []
+
+Progress: 37,5%
+
+## frontend
+
+- Sign up []
+- Sign in []
+- Sign out []
+- Main page []
+- Chats []
+- Profile []
+- Albums []
+
+Progress: 0%
+
+## total
+
+Done: 20%
