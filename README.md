@@ -66,9 +66,6 @@
   Users who abuse the reporting system face consequences.
 
 - 💎 **Premium done right**  
-  Premium features offer true value, not just paywalls or restrictions.
-
-- 💬 **Instant connection**  
-  Tools for fast, respectful, and real-life-ready dating experiences.
+  Premium features here mean premium, not just a way to remove ads and restrictions.
 
 ---
