@@ -1,34 +1,74 @@
-# Greender (codename Anti-Grindr, probably the name would be changed)
+# 🌈 Greender  
+**(Codename: Anti-Grindr — the name may change in the future)**
 
-An alternative to Grindr, which abuses its position, puts money above the user's interests. 
+> 💬 *An alternative to Grindr, which abuses its dominant position and prioritizes profit over people.*  
+> The goal is to build a safe, ethical, and empowering LGBTQ+ platform that puts **users first**.
 
-Now I'm working on MVP: 
+---
 
-## backend
+## 🚀 MVP Development Status
 
-- Create user [x]
-- Login [x]
-- Logout [x]
-- Refresh token []
-- Create profile []
-- Update profile []
-- Albums (private/public) []
-- Messagging []
+### 📦 Backend Features
 
-Progress: 37,5%
+| Feature                        | Status   |
+|-------------------------------|----------|
+| 👤 Create user                 | ✅ Done  |
+| 🔐 Login                      | ✅ Done  |
+| 🔓 Logout                     | ✅ Done  |
+| ♻️ Refresh token              | ⏳ To Do |
+| 🧑‍💻 Create profile            | ⏳ To Do |
+| 🛠️ Update profile             | ⏳ To Do |
+| 🖼️ Albums (private/public)     | ⏳ To Do |
+| 💬 Messaging                   | ⏳ To Do |
 
-## frontend
+**Backend Progress:** **`37.5%`**
 
-- Sign up []
-- Sign in []
-- Sign out []
-- Main page []
-- Chats []
-- Profile []
-- Albums []
+---
 
-Progress: 0%
+### 🎨 Frontend Features
 
-## total
+| Feature       | Status   |
+|---------------|----------|
+| 📝 Sign up     | ⏳ To Do |
+| 🔐 Sign in     | ⏳ To Do |
+| 🔓 Sign out    | ⏳ To Do |
+| 🏠 Main page   | ⏳ To Do |
+| 💬 Chats       | ⏳ To Do |
+| 🧑 Profile     | ⏳ To Do |
+| 🖼️ Albums      | ⏳ To Do |
 
-Done: 20%
+**Frontend Progress:** **`0%`**
+
+---
+
+### 📊 Total Project Progress
+
+- ✅ **Completed:** `3 / 15`
+- 📈 **Total Progress:** **`20%`**
+
+---
+
+## ✨ Core Principles & Features
+
+- 🔒 **Enhanced user safety**  
+  Verified users can block messages from unverified ones. Users can also block by device.
+
+- 🧼 **Anti-abuse protection**  
+  Prevents repeated account creation (e.g. one per week per device).
+
+- 🚫 **Combat illegal activity**  
+  Actively discourages illegal solicitation and unsafe behavior.
+
+- 🏆 **Gamified experience**  
+  Users earn achievements, badges, and unlockable features.
+
+- ⚠️ **False report penalties**  
+  Users who abuse the reporting system face consequences.
+
+- 💎 **Premium done right**  
+  Premium features offer true value, not just paywalls or restrictions.
+
+- 💬 **Instant connection**  
+  Tools for fast, respectful, and real-life-ready dating experiences.
+
+---
