@@ -16,11 +16,7 @@ export default defineConfig({
       user: '/src/user'
     },
     env: {
-      JWT_SECRET_KEY: 'change_me',
-      JWT_REFRESH_SECRET_KEY: 'refresh_me',
-      NODE_ENV: 'testing',
-      DATABASE_URL:
-        'postgresql://postgres:postgres@localhost:5435/postgres?schema=public'
+      ...process.env
     }
   }
 })

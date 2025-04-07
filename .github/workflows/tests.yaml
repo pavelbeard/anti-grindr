@@ -16,9 +16,13 @@ jobs:
         run: pnpm --filter=backend run test:unit
   integration-test-backend:
     runs-on: ubuntu-24.04
+    env:
+      JWT_SECRET_KEY: "change_me"
+      JWT_REFRESH_SECRET_KEY: "refresh_me"
+      NODE_ENV: "testing"
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5435/postgres?schema=public"
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/build
       - name: Run integration tests
         run: pnpm --filter=backend run test:int
-    
