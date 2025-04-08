@@ -57,7 +57,7 @@ const UpdatePasswordSchema = z.object({
 
 const DeleteAccountSchema = z.object({
   body: z.object({
-    password: z.string()
+    actualPassword: z.string()
   }),
   params: z.object({
     id: z.string()

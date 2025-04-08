@@ -225,6 +225,12 @@ export const deleteAccount: RequestHandler = async (
     actualPassword: req.body.actualPassword
   }
 
+  const refreshToken = req.cookies.__rclientid
+
+  if (!refreshToken) {
+    return next(new AppError('validation', 'Refresh token not found.'))
+  }
+
   const existingUser = await AuthService.findUserById(userData.id)
 
   if (existingUser == null) {
@@ -242,8 +248,5 @@ export const deleteAccount: RequestHandler = async (
 
   await AuthService.deleteUser(userData.id)
 
-  res
-    .status(204)
-    .clearCookie('__rclientid')
-    .json({ message: 'User deleted successfully.' })
+  res.status(204).clearCookie('__rclientid').json({})
 }
