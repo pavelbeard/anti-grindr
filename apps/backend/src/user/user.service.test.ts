@@ -155,13 +155,9 @@ describe('user.service', () => {
 
       AuthService.createJWT(user)
 
-      expect(jwt.sign).toHaveBeenCalledWith(
-        user,
-        process.env.JWT_SECRET_KEY,
-        {
-          expiresIn: JWT_TOKEN_EXPIRATION_TIME
-        }
-      )
+      expect(jwt.sign).toHaveBeenCalledWith(user, process.env.JWT_SECRET_KEY, {
+        expiresIn: JWT_TOKEN_EXPIRATION_TIME
+      })
 
       expect(jwt.sign).toHaveBeenCalledTimes(1)
     })

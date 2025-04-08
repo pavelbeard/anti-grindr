@@ -63,7 +63,7 @@ export const updateUserPassword = async (id: string, password: string) => {
 }
 
 export const deleteUser = async (id: string) => {
-  return await prisma.user.delete({
+  await prisma.user.delete({
     where: { id }
   })
 }
