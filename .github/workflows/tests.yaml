@@ -6,6 +6,7 @@ on:
       - main
       - ci-cd
       - finish-user
+      - features/*
 
 jobs:
   unit-test-backend:
