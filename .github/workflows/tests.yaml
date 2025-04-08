@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - ci-cd
+      - finish-user
 
 jobs:
   unit-test-backend:
