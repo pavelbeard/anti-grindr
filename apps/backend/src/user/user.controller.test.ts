@@ -640,10 +640,14 @@ describe('user.controller', () => {
   describe('deleteAccount', () => {
     beforeEach(() => {
       request.params = { id: '1' }
+      request.cookies = {
+        __rclientid: 'refreshToken'
+      }
     })
 
     afterEach(() => {
       request.params = {}
+      request.cookies = {}
     })
 
     it('should throw an error if user not found.', async () => {
@@ -699,9 +703,6 @@ describe('user.controller', () => {
 
       expect(response.status).toHaveBeenCalledWith(204)
       expect(response.clearCookie).toHaveBeenCalledWith('__rclientid')
-      expect(response.json).toHaveBeenCalledWith({
-        message: 'User deleted successfully.'
-      })
     })
   })
 })
