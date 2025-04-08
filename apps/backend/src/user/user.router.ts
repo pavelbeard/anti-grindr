@@ -3,7 +3,6 @@ import * as AuthController from '@/user/user.controller.ts'
 import {
   CreateUserSchema,
   DeleteAccountSchema,
-  RefreshTokenSchema,
   SignInUserSchema,
   UpdateEmailSchema,
   UpdatePasswordSchema
@@ -16,11 +15,7 @@ const authRouter: Router = Router()
 authRouter.post('/sign-up', validate(CreateUserSchema), AuthController.signUp)
 authRouter.post('/sign-in', validate(SignInUserSchema), AuthController.signIn)
 authRouter.post('/sign-out', authorization, AuthController.signOut)
-authRouter.post(
-  '/refresh-token',
-  validate(RefreshTokenSchema),
-  AuthController.refreshToken
-)
+authRouter.post('/refresh-token', authorization, AuthController.refreshToken)
 
 authRouter.get('/:id', authorization, AuthController.getUser)
 

@@ -76,16 +76,9 @@ const SignInUserSchema = z.object({
   })
 })
 
-const RefreshTokenSchema = z.object({
-  body: z.object({
-    refreshToken: z.string()
-  })
-})
-
 export {
   CreateUserSchema,
   DeleteAccountSchema,
-  RefreshTokenSchema,
   SignInUserSchema,
   UpdateEmailSchema,
   UpdatePasswordSchema
