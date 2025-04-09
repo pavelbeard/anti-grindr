@@ -67,15 +67,35 @@ model Picture {
   @@unique([albumId, order])
 }
 
+enum GENDER {
+  male
+  cismale
+  transmale
+  female
+  cisfemale
+  transfemale
+  nonbinary
+}
+
 model Gender {
   id       Int       @id @default(autoincrement())
-  name     String    @unique
+  name     GENDER
   profiles Profile[]
+}
+
+enum PRONOUN {
+  he_him_his
+  she_her_hers
+  they_them_theirs
+  ze_hir_hirs
+  ze_zir_zirs
+  use_my_name
+  ask_me
 }
 
 model Pronoun {
   id       Int       @id @default(autoincrement())
-  name     String    @unique
+  name     PRONOUN
   profiles Profile[]
 }
 
