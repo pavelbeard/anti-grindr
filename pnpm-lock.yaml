@@ -96,6 +96,9 @@ importers:
       '@types/yamljs':
         specifier: ^0.2.34
         version: 0.2.34
+      core-js:
+        specifier: ^3.41.0
+        version: 3.41.0
       eslint:
         specifier: ^9.22.0
         version: 9.22.0(jiti@2.4.2)
@@ -1592,6 +1595,9 @@ packages:
 
   cookiejar@2.1.4:
     resolution: {integrity: sha512-LDx6oHrK+PhzLKJU9j5S7/Y3jM/mUHvD/DeI1WQmJn652iPC5Y4TBzC9l+5OMOXlyTTA+SmVUPm0HQUwpD5Jqw==}
+
+  core-js@3.41.0:
+    resolution: {integrity: sha512-SJ4/EHwS36QMJd6h/Rg+GyR4A5xE0FSI3eZ+iBVpfqf1x0eTSg1smWLHrA+2jQThZSh97fmSgFSU8B61nxosxA==}
 
   cors@2.8.5:
     resolution: {integrity: sha512-KIHbLJqu73RGr/hnbrO9uBeixNGuvSQjul/jdFvS/KFSIH1hWVd1ng7zOHx+YrEfInLG7q4n6GHQ9cDtxv/P6g==}
@@ -5226,6 +5232,8 @@ snapshots:
   cookie@1.0.2: {}
 
   cookiejar@2.1.4: {}
+
+  core-js@3.41.0: {}
 
   cors@2.8.5:
     dependencies:
