@@ -3,7 +3,7 @@ import {
   errorFallback,
   originResolver
 } from '@/lib/middlewares.ts'
-import messageRouter from '@/message/message.routes.ts'
+import profileRouter from '@/profile/profile.routes.ts'
 import { ALLOWED_ORIGINS, swaggerDocs } from '@/settings.ts'
 import usersRouter from '@/user/user.router.ts'
 import cookieParser from 'cookie-parser'
@@ -35,7 +35,8 @@ app.disable('x-powered-by')
 
 // routers
 app.use('/api/user', usersRouter)
-app.use('/api/message', authorization, messageRouter)
+app.use('/api/profile', authorization, profileRouter)
+// app.use('/api/message', authorization, messageRouter)
 
 // error handler
 app.use(errorFallback)
