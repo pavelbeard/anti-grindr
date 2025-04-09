@@ -3,7 +3,6 @@ import { JWT_HTTP_SECURED } from '@/settings.ts'
 import * as AuthService from '@/user/user.service.ts'
 import {
   CreateUserSchema,
-  RefreshTokenSchema,
   SignInUserSchema,
   UpdateEmailSchema,
   UpdatePasswordSchema
@@ -89,7 +88,7 @@ export const signOut: RequestHandler = async (
 }
 
 export const refreshToken: RequestHandler = async (
-  req: Request<unknown, unknown, RefreshTokenSchema>,
+  req: Request<unknown, unknown, unknown>,
   res: Response,
   next: NextFunction
 ) => {
