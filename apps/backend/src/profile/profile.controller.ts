@@ -1,67 +1,45 @@
 import prisma from '@/lib/prisma.ts'
-import type { Profile, User } from '@prisma/client'
-import type { Request, Response } from 'express'
+import type { Profile } from '@prisma/client'
+import type { NextFunction, Request, Response } from 'express'
+import * as ProfileService from '@/profile/profile.service.ts'
+import { AppError } from '@/lib/utility-classes.ts'
+import { CreateProfileSchema, GetProfileSchema } from './profile.types.ts'
 
 // TODO: Implement gender, pronoun, picture, album logic
 
-class ProfileController {
-  async getProfile (id: User['id']) {
-    const result = await prisma.profile.findUnique({
-      where: { userId: id },
-      include: {
-        genders: true,
-        pronouns: true,
-        pictures: { orderBy: { order: 'asc' } },
-        albums: { orderBy: { order: 'asc' } }
-      }
-    })
+export const createProfile = async (
+  req: Request<CreateProfileSchema>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req.params
 
-    if (result == null) {
-      throw new Error('Profile not found')
-    }
-
-    return result
+  if (!userId) {
+    return next(new AppError('validation', 'User ID is required'))
   }
-}
 
-export { ProfileController }
-
-export const createProfile = async (id: User['id']) => {
-  const profile: Profile | null = await prisma.profile.create({
-    data: {
-      userId: id
-    }
-  })
+  const profile = await ProfileService.createProfile(userId)
 
   if (!profile) {
-    throw new Error('Profile not created')
+    return next(new AppError('server', 'Something went wrong...'))
   }
 
-  return profile
+  res.status(201).json(profile)
 }
 
-export const getProfile = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params
-    const profile: Profile | null = await prisma.profile.findUnique({
-      where: { userId: id },
-      include: {
-        genders: true,
-        pronouns: true,
-        pictures: { orderBy: { order: 'asc' } },
-        albums: { orderBy: { order: 'asc' } }
-      }
-    })
+export const getProfile = async (
+  req: Request<GetProfileSchema>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req.params
+  const profile = await ProfileService.getProfile(userId)
 
-    if (profile == null) {
-      res.status(404).json({ error: 'Profile not found ' })
-    }
-
-    res.status(200).json(profile)
-  } catch (err) {
-    res.status(500).json({ error: 'Internal Server Error' })
-    console.error(err)
+  if (!profile) {
+    return next(new AppError('notFound', 'Profile not found'))
   }
+
+  res.status(200).json(profile)
 }
 
 export const updateProfile = async (req: Request, res: Response) => {
