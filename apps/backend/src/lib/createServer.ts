@@ -3,7 +3,7 @@ import {
   errorFallback,
   originResolver
 } from '@/lib/middlewares.ts'
-import profileRouter from '@/profile/profile.routes.ts'
+import profileRouter from '@/profile/profile.router'
 import { ALLOWED_ORIGINS, swaggerDocs } from '@/settings.ts'
 import usersRouter from '@/user/user.router.ts'
 import cookieParser from 'cookie-parser'
