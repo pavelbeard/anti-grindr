@@ -1,6 +1,6 @@
-import resetDb from "./reset-db.ts";
-import { beforeEach } from "vitest";
+import { beforeEach } from 'vitest'
+import resetDb from './reset-db.ts'
 
 beforeEach(async () => {
-  await resetDb();
-});
+  await resetDb()
+})

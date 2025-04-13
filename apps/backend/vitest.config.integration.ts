@@ -1,5 +1,5 @@
-import { defineConfig } from "vitest/config";
-import tsconfigpaths from "vite-tsconfig-paths";
+import tsconfigpaths from 'vite-tsconfig-paths'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [tsconfigpaths()],
@@ -9,14 +9,14 @@ export default defineConfig({
         maxThreads: 0,
       },
     },
-    include: ["./src/tests/**/*.test.ts"],
-    setupFiles: ["./src/tests/helpers/setup.ts"],
+    include: ['./src/tests/**/*.test.ts'],
+    setupFiles: ['./src/tests/helpers/setup.ts'],
     alias: {
-      lib: "/src/lib",
-      user: "/src/user",
+      lib: '/src/lib',
+      user: '/src/user',
     },
     env: {
       ...process.env,
     },
   },
-});
+})

@@ -1,21 +1,21 @@
-import type { Request, Response } from "express";
-import { Router } from "express";
+import type { Request, Response } from 'express'
+import { Router } from 'express'
 
 interface TestMessage {
-  id: string;
-  senderId: string;
-  receiverId: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
+  id: string
+  senderId: string
+  receiverId: string
+  content: string
+  createdAt: string
+  updatedAt: string
 }
 
-const messages: TestMessage[] = [];
+const messages: TestMessage[] = []
 
-const messageRouter: Router = Router();
+const messageRouter: Router = Router()
 
-messageRouter.post("/send", (req: Request, res: Response) => {
-  const { senderId, receiverId, content } = req.body;
+messageRouter.post('/send', (req: Request, res: Response) => {
+  const { senderId, receiverId, content } = req.body
 
   const message: TestMessage = {
     id: Math.random().toString(36).slice(2, 9),
@@ -24,20 +24,20 @@ messageRouter.post("/send", (req: Request, res: Response) => {
     content,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-  };
+  }
 
-  messages.push(message);
-  res.status(201).json(message);
-});
+  messages.push(message)
+  res.status(201).json(message)
+})
 
-messageRouter.get("/:userId", (req: Request, res: Response) => {
-  const userId = req.params.userId;
+messageRouter.get('/:userId', (req: Request, res: Response) => {
+  const userId = req.params.userId
 
   const userMessages = messages.filter(
     (message) => message.senderId === userId || message.receiverId === userId,
-  );
+  )
 
-  res.status(200).json(userMessages);
-});
+  res.status(200).json(userMessages)
+})
 
-export default messageRouter;
+export default messageRouter
