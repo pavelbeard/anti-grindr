@@ -1,12 +1,9 @@
-import MainPage from "@/MainPage";
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router";
+import RoutesScheme from '@/RoutesScheme'
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <MainPage />
-    </BrowserRouter>
+    <RoutesScheme />
   </StrictMode>,
-);
+)
