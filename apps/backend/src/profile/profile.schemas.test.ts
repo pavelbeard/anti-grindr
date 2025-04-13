@@ -1,9 +1,9 @@
-import 'core-js/proposals/set-methods'
-import { describe, expect, it } from 'vitest'
 import {
   UpdateProfileSchema,
   validateGenderConsistency,
-} from './profile.schemas.ts'
+} from '@/profile/profile.schemas.ts'
+import 'core-js/proposals/set-methods'
+import { describe, expect, it } from 'vitest'
 
 describe('profile.schemas', () => {
   describe('validateGenderConsistency', () => {
