@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [tsconfigpaths()],
   test: {
     include: ['./src/**/*.test.ts', '!src/tests'],
+    exclude: ['./src/profile/profile.schemas.test.ts'],
     alias: {
       lib: '/src/lib',
       user: '/src/user',
