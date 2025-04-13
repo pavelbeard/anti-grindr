@@ -1,3 +1,4 @@
+import { SEXUAL_ROLE } from '@prisma/client'
 import { z } from 'zod'
 
 const CreateProfileSchema = z.object({
@@ -17,23 +18,8 @@ const GetProfileSchema = z.object({
     .optional(),
 })
 
-const SEX_ROLE = z.enum([
-  'active',
-  'passive',
-  'versatile',
-  'versatile-top',
-  'versatile-bottom',
-  'side',
-])
-const GENDER = z.enum([
-  'male',
-  'cismale',
-  'transmale',
-  'female',
-  'cisfemale',
-  'transfemale',
-  'nonbinary',
-])
+const SEX_ROLE = z.nativeEnum(SEXUAL_ROLE)
+
 // const PRONOUN = z.enum(['he_him_his', 'she_her_hers', 'they_them_theirs', 'ze_hir_hirs', 'ze_zir_zirs', 'use_my_name', 'ask_me'])
 
 const MALE_GENDERS = new Set(['male', 'cismale', 'transmale'])
@@ -61,7 +47,7 @@ const UpdateProfileSchema = z.object({
     age: z.number().positive().min(18).max(99).optional(),
     bio: z.string().max(1000).optional(),
     sexRole: SEX_ROLE.optional(),
-    gender: z.array(GENDER).refine(validateGenderConsistency).optional(),
+    genders: z.string().array().refine(validateGenderConsistency).optional(),
   }),
 })
 

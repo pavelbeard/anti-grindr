@@ -1,9 +1,12 @@
-import prisma from '@/lib/prisma.ts'
 import { AppError } from '@/lib/utility-classes.ts'
 import * as ProfileService from '@/profile/profile.service.ts'
-import type { Profile } from '@prisma/client'
+import {
+  CreateProfileSchema,
+  GetProfileSchema,
+  UpdateProfileSchema,
+} from '@/profile/profile.types.ts'
+import { Profile } from '@prisma/client'
 import type { NextFunction, Request, RequestHandler, Response } from 'express'
-import { CreateProfileSchema, GetProfileSchema } from './profile.types.ts'
 
 // TODO: Implement gender, pronoun, picture, album logic
 
@@ -46,27 +49,33 @@ export const getProfile: RequestHandler<GetProfileSchema['params']> = async (
   res.status(200).json(profile)
 }
 
-export const updateProfile = async (req: Request, res: Response) => {
-  try {
-    const { name, age, bio, sexRole } = req.body
-    const { id } = req.params
-    const updatedProfile: Profile | null = await prisma.profile.update({
-      where: { userId: id },
-      data: {
-        name,
-        age: age ? Number(age) : undefined,
-        bio,
-        sexRole,
-      },
-    })
+export const updateProfile: RequestHandler<
+  UpdateProfileSchema['params']
+> = async (
+  req: Request<
+    UpdateProfileSchema['params'],
+    unknown,
+    UpdateProfileSchema['body']
+  >,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { userId } = req.params
+  const { name, age, bio, sexRole, genders } = req.body
 
-    if (!updatedProfile) {
-      res.status(404).json({ error: 'Profile not found' })
-    }
+  const existingProfile = await ProfileService.getProfileByUserId(userId)
 
-    res.status(200).json(updatedProfile)
-  } catch (err) {
-    res.status(500).json({ error: 'Internal Server Error' })
-    console.error(err)
+  if (!existingProfile) {
+    next(new AppError('notFound', 'Profile not found'))
   }
+
+  const updatedProfile = await ProfileService.updateProfile(userId, {
+    name,
+    age,
+    bio,
+    sexRole,
+    genders,
+  } as unknown as Profile)
+
+  res.status(200).json(updatedProfile)
 }

@@ -1,10 +1,14 @@
 import { AppError } from '@/lib/utility-classes'
+import * as ProfileController from '@/profile/profile.controller.ts'
 import * as ProfileService from '@/profile/profile.service.ts'
+import {
+  CreateProfileSchema,
+  GetProfileSchema,
+  UpdateProfileSchema,
+} from '@/profile/profile.types'
 import { Profile } from '@prisma/client'
 import type { Request, Response } from 'express'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import * as ProfileController from './profile.controller.ts'
-import { CreateProfileSchema, GetProfileSchema } from './profile.types'
 
 vi.mock('profile/profile.service', () => ({
   createProfile: vi.fn(),
@@ -286,6 +290,162 @@ describe('profile.controller', () => {
             },
           ],
         })
+      })
+    })
+  })
+
+  describe('updateProfile', () => {
+    it('should throw an error if profile not found.', async () => {
+      request = {
+        params: { userId: '1' },
+        body: {
+          name: 'John Doe',
+          age: 25,
+          height: 180,
+          weight: 75,
+          sexRole: 'active' as Profile['sexRole'],
+          bio: 'I am a bio',
+          genders: [{ name: 'male' }],
+          pronouns: [{ name: 'he_him_his' }],
+        },
+      } as unknown as Request<
+        UpdateProfileSchema['params'],
+        unknown,
+        UpdateProfileSchema['body']
+      >
+
+      vi.mocked(ProfileService.getProfileByUserId).mockResolvedValueOnce(null)
+
+      await ProfileController.updateProfile(
+        request as Request<
+          UpdateProfileSchema['params'],
+          unknown,
+          UpdateProfileSchema['body']
+        >,
+        response,
+        next,
+      )
+
+      expect(next).toHaveBeenCalledWith(
+        new AppError('notFound', 'Profile not found'),
+      )
+      expect(next.mock.calls[0][0]).toBeInstanceOf(AppError)
+      expect(next.mock.calls[0][0].message).toBe('Profile not found')
+      expect(next.mock.calls[0][0].type).toBe('notFound')
+    })
+
+    it('should update the profile.', async () => {
+      vi.mocked(ProfileService.getProfileByUserId).mockResolvedValueOnce({
+        id: '1',
+        userId: '1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        name: 'John Doe',
+        age: 25,
+        height: 180,
+        weight: 75,
+        sexRole: 'active' as Profile['sexRole'],
+        bio: 'I am a bio',
+        genders: [{ name: 'male' }],
+        pronouns: [{ name: 'he_him_his' }],
+        pictures: [
+          {
+            albumId: '1',
+            url: 'https://example.com',
+          },
+        ],
+        albums: [
+          {
+            id: '1',
+            name: 'Album 1',
+            profileId: '1',
+          },
+        ],
+      })
+
+      request = {
+        params: { userId: '1' },
+        body: {
+          name: 'John Doe',
+          age: 25,
+          height: 199,
+          weight: 85,
+          sexRole: 'passive' as Profile['sexRole'],
+          bio: 'I am a bio',
+          genders: [{ name: 'male' }],
+          pronouns: [{ name: 'they_them_theirs' }],
+        },
+      } as unknown as Request<
+        UpdateProfileSchema['params'],
+        unknown,
+        UpdateProfileSchema['body']
+      >
+
+      vi.mocked(ProfileService.updateProfile).mockResolvedValueOnce({
+        id: '1',
+        userId: '1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        name: 'John Doe',
+        age: 25,
+        height: 199,
+        weight: 85,
+        sexRole: 'passive' as Profile['sexRole'],
+        bio: 'I am a bio',
+        genders: [{ name: 'male' }],
+        pronouns: [{ name: 'they_them_theirs' }],
+        pictures: [
+          {
+            albumId: '1',
+            url: 'https://example.com',
+          },
+        ],
+        albums: [
+          {
+            id: '1',
+            name: 'Album 1',
+            profileId: '1',
+          },
+        ],
+      } as unknown as Profile)
+
+      await ProfileController.updateProfile(
+        request as Request<
+          UpdateProfileSchema['params'],
+          unknown,
+          UpdateProfileSchema['body']
+        >,
+        response,
+        next,
+      )
+
+      expect(response.status).toHaveBeenCalledWith(200)
+      expect(response.json).toHaveBeenCalledWith({
+        id: '1',
+        userId: '1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        name: 'John Doe',
+        age: 25,
+        height: 199,
+        weight: 85,
+        sexRole: 'passive' as Profile['sexRole'],
+        bio: 'I am a bio',
+        genders: [{ name: 'male' }],
+        pronouns: [{ name: 'they_them_theirs' }],
+        pictures: [
+          {
+            albumId: '1',
+            url: 'https://example.com',
+          },
+        ],
+        albums: [
+          {
+            id: '1',
+            name: 'Album 1',
+            profileId: '1',
+          },
+        ],
       })
     })
   })
