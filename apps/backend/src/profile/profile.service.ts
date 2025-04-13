@@ -1,50 +1,55 @@
-import { Prisma, Profile, User } from '@prisma/client'
-import prisma from '@/lib/prisma.ts'
+import { Prisma, Profile, User } from "@prisma/client";
+import prisma from "@/lib/prisma.ts";
 
-export const createProfile = async (userId: User['id']) => {
-  const profile: Profile | null = await prisma.profile.create({
+export const createProfile = async (userId: User["id"]) => {
+  return await prisma.profile.create({
     data: {
-      userId
-    }
-  })
+      userId,
+    },
+  });
+};
 
-  return profile
-}
-
-export const getProfile = async (userId: User['id']) => {
-  const profile: Profile | null = await prisma.profile.findUnique({
+export const getProfileByUserId = async (userId: User["id"]) => {
+  return await prisma.profile.findUnique({
     where: { userId },
     include: {
-      genders: true,
-      pronouns: true,
-      pictures: { orderBy: { order: 'asc' } },
-      albums: { orderBy: { order: 'asc' } }
-    }
-  })
+      genders: {
+        select: { name: true },
+      },
+      pronouns: {
+        select: { name: true },
+      },
+      pictures: {
+        select: { albumId: true, url: true },
+        orderBy: { order: "asc" },
+      },
+      albums: {
+        select: { id: true, profileId: true, name: true },
+        orderBy: { order: "asc" },
+      },
+    },
+  });
+};
 
-  return profile
-}
-
-export const getProfileNameAndMainPicture = async (userId: User['id']) => {
-  const profile: Profile | null = await prisma.profile.findUnique({
+export const getProfileNameAndMainPicture = async (userId: User["id"]) => {
+  return await prisma.profile.findUnique({
     where: { userId },
-    include: {
-      pictures: { take: 1 }
-    }
-  })
-
-  return profile
-}
+    select: {
+      name: true,
+      pictures: { take: 1 },
+    },
+  });
+};
 
 // Is it PATCH or PUT ???
 export const updateProfile = async (
-  userId: User['id'],
-  data: Prisma.ProfileUpdateInput
+  userId: User["id"],
+  data: Prisma.ProfileUpdateInput,
 ) => {
   const profile: Profile | null = await prisma.profile.update({
     where: { userId },
-    data
-  })
+    data,
+  });
 
-  return profile
-}
+  return profile;
+};

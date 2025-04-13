@@ -1,17 +1,18 @@
-import { config } from 'dotenv'
-import { defineConfig } from 'vitest/config'
-import tsconfigpaths from 'vite-tsconfig-paths'
+import { config } from "dotenv";
+import { defineConfig } from "vitest/config";
+import tsconfigpaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [tsconfigpaths()],
   test: {
-    include: ['./src/**/*.test.ts', '!src/tests'],
+    include: ["./src/**/*.test.ts", "!src/tests"],
     alias: {
-      lib: '/src/lib',
-      user: '/src/user'
+      lib: "/src/lib",
+      user: "/src/user",
+      profile: "/src/profile",
     },
     env: {
-      ...config({ path: './.testing.env' }).parsed
-    }
-  }
-})
+      ...config({ path: "./.testing.env" }).parsed,
+    },
+  },
+});
