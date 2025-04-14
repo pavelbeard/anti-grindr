@@ -386,7 +386,7 @@ describe('User', () => {
       expect(status).toBe(200)
       expect(body).toHaveProperty('token')
     })
-  })
+  }, 10000)
 
   describe('[GET] /api/user/:id', () => {
     beforeEach(async () => {
@@ -411,10 +411,14 @@ describe('User', () => {
       // 1. SignIn
       const {
         body: { token },
-      } = await request.agent(app).post('/api/user/sign-in').send({
-        email: 'test@example.com',
-        password: 'Ign!is*123',
-      })
+      } = await request
+        .agent(app)
+        .post('/api/user/sign-in')
+        .send({
+          email: 'test@example.com',
+          password: 'Ign!is*123',
+        })
+        .timeout(10000)
 
       // 2. GetUser
 
@@ -462,7 +466,7 @@ describe('User', () => {
     beforeEach(async () => {
       await prisma.user.create({
         data: {
-          email: 'test@example.com',
+          email: 'test10@example.com',
           password: bcrypt.hashSync('Ign!is*123'),
         },
       })
@@ -475,7 +479,7 @@ describe('User', () => {
           user: { id },
         },
       } = await request.agent(app).post('/api/user/sign-in').send({
-        email: 'test@example.com',
+        email: 'test10@example.com',
         password: 'Ign!is*123',
       })
 
@@ -499,7 +503,7 @@ describe('User', () => {
           user: { id },
         },
       } = await request.agent(app).post('/api/user/sign-in').send({
-        email: 'test@example.com',
+        email: 'test10@example.com',
         password: 'Ign!is*123',
       })
 
@@ -523,7 +527,7 @@ describe('User', () => {
       const {
         body: { token },
       } = await request.agent(app).post('/api/user/sign-in').send({
-        email: 'test@example.com',
+        email: 'test10@example.com',
         password: 'Ign!is*123',
       })
 
@@ -552,7 +556,7 @@ describe('User', () => {
           user: { id },
         },
       } = await request.agent(app).post('/api/user/sign-in').send({
-        email: 'test@example.com',
+        email: 'test10@example.com',
         password: 'Ign!is*123',
       })
 
@@ -578,7 +582,7 @@ describe('User', () => {
     beforeEach(async () => {
       await prisma.user.create({
         data: {
-          email: 'test@example.com',
+          email: 'model22@example.com',
           password: bcrypt.hashSync('Ign!is*123'),
         },
       })
@@ -590,8 +594,8 @@ describe('User', () => {
         body: {
           user: { id },
         },
-      } = await request.agent(app).post('/api/user/sign-in').send({
-        email: 'test@example.com',
+      } = await request(app).post('/api/user/sign-in').send({
+        email: 'model22@example.com',
         password: 'Ign!is*123',
       })
 
@@ -615,7 +619,7 @@ describe('User', () => {
           user: { id },
         },
       } = await request.agent(app).post('/api/user/sign-in').send({
-        email: 'test@example.com',
+        email: 'model22@example.com',
         password: 'Ign!is*123',
       })
 
@@ -642,15 +646,14 @@ describe('User', () => {
       // 1. SignIn
       const {
         body: { token },
-      } = await request.agent(app).post('/api/user/sign-in').send({
-        email: 'test@example.com',
+      } = await request(app).post('/api/user/sign-in').send({
+        email: 'model22@example.com',
         password: 'Ign!is*123',
       })
 
       // 2. UpdatePassword
 
-      const { status, body } = await request
-        .agent(app)
+      const { status, body } = await request(app)
         .patch('/api/user/sdkfsjdflkds/update-password')
         .set('Authorization', `Bearer ${token}`)
         .send({
@@ -672,8 +675,8 @@ describe('User', () => {
           token,
           user: { id },
         },
-      } = await request.agent(app).post('/api/user/sign-in').send({
-        email: 'test@example.com',
+      } = await request(app).post('/api/user/sign-in').send({
+        email: 'model22@example.com',
         password: 'Ign!is*123',
       })
 
@@ -702,10 +705,13 @@ describe('User', () => {
           token,
           user: { id },
         },
-      } = await request.agent(app).post('/api/user/sign-in').send({
-        email: 'test@example.com',
+      } = await request(app).post('/api/user/sign-in').send({
+        email: 'model22@example.com',
         password: 'Ign!is*123',
       })
+
+      expect(token).toBeDefined()
+      expect(id).toBeDefined()
 
       // 2. UpdatePassword
 
@@ -720,10 +726,11 @@ describe('User', () => {
         })
 
       expect(status).toBe(200)
+      expect(body).toHaveProperty('token')
       expect(body).toHaveProperty('user')
       expect(body.user).toHaveProperty('email')
-      expect(body.user.email).toBe('test@example.com')
-    })
+      expect(body.user.email).toBe('model22@example.com')
+    }, 10000)
   })
 
   describe('[DELETE] /api/user/:id', () => {

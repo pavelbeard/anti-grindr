@@ -20,7 +20,7 @@ profileRouter.get(
   validate(GetProfileSchema),
   ProfileController.getProfile,
 )
-profileRouter.put(
+profileRouter.patch(
   '/:userId',
   validate(UpdateProfileSchema),
   ProfileController.updateProfile,

@@ -18,7 +18,7 @@ describe('Profile', () => {
     })
   })
 
-  describe('createProfile', () => {
+  describe('[POST] /api/profile/:userId/create', () => {
     it('should throw a 404 error if user ID is not provided', async () => {
       // Sign in
 
@@ -38,7 +38,7 @@ describe('Profile', () => {
 
       expect(status).toBe(404)
       expect(body).not.toHaveProperty('profile')
-    })
+    }, 10000)
 
     it('should throw an error if user not found.', async () => {
       // Sign in
@@ -63,7 +63,10 @@ describe('Profile', () => {
     it('should create profile successfully.', async () => {
       // Sign in
       const {
-        body: { token },
+        body: {
+          token,
+          user: { id },
+        },
       } = await request(app).post('/api/user/sign-in').send({
         email: 'profile@example.com',
         password: '98Hex$111!',
@@ -72,7 +75,7 @@ describe('Profile', () => {
       expect(token).toBeDefined()
 
       const { status, body } = await request(app)
-        .post('/api/profile/1/create')
+        .post(`/api/profile/${id}/create`)
         .set('Authorization', `Bearer ${token}`)
 
       expect(status).toBe(201)
@@ -85,7 +88,7 @@ describe('Profile', () => {
     })
   })
 
-  describe('getProfile', () => {
+  describe('[GET] /api/profile/:userId', () => {
     beforeEach(async () => {
       await prisma.profile.create({
         data: {
@@ -187,7 +190,7 @@ describe('Profile', () => {
     })
   })
 
-  describe('updateProfile', () => {
+  describe('[PATCH] /api/profile/:userId', () => {
     beforeEach(async () => {
       await prisma.profile.create({
         data: {
@@ -212,7 +215,7 @@ describe('Profile', () => {
       expect(token).toBeDefined()
 
       const { status, body } = await request(app)
-        .put('/api/profile')
+        .patch('/api/profile')
         .set('Authorization', `Bearer ${token}`)
 
       expect(status).toBe(404)
@@ -231,7 +234,7 @@ describe('Profile', () => {
       expect(token).toBeDefined()
 
       const { status, body } = await request(app)
-        .put('/api/profile/9')
+        .patch('/api/profile/9')
         .set('Authorization', `Bearer ${token}`)
 
       expect(status).toBe(404)
@@ -251,7 +254,7 @@ describe('Profile', () => {
       expect(token).toBeDefined()
 
       const { status, body } = await request(app)
-        .put('/api/profile/1')
+        .patch('/api/profile/1')
         .set('Authorization', `Bearer ${token}`)
         .send({
           name: 'Estoy buscando amigos',

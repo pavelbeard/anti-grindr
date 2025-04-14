@@ -4,10 +4,9 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [tsconfigpaths()],
   test: {
+    fileParallelism: false,
     poolOptions: {
-      threads: {
-        maxThreads: 0,
-      },
+      singleThread: true,
     },
     include: ['./src/tests/**/*.test.ts'],
     setupFiles: ['./src/tests/helpers/setup.ts'],

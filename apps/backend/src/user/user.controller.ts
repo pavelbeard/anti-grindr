@@ -162,9 +162,13 @@ export const updateEmail: RequestHandler<UpdateEmailSchema['params']> = async (
     await AuthService.updateUserEmail(userData.id, userData.newEmail),
   )
 
-  res
-    .status(200)
-    .json({ message: 'User email updated successfully.', user: updatedUser })
+  const newToken = AuthService.createJWT(updatedUser)
+
+  res.status(200).json({
+    message: 'User email updated successfully.',
+    user: updatedUser,
+    token: newToken,
+  })
 }
 
 export const updatePassword: RequestHandler<
@@ -208,9 +212,12 @@ export const updatePassword: RequestHandler<
     await AuthService.updateUserPassword(userData.id, userData.newPassword),
   )
 
+  const newToken = AuthService.createJWT(updatedUser)
+
   res.status(200).json({
     message: 'User password updated successfully.',
     user: updatedUser,
+    token: newToken,
   })
 }
 
