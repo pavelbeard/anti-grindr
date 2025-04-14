@@ -5,6 +5,7 @@ import {
   GetProfileSchema,
   UpdateProfileSchema,
 } from '@/profile/profile.types.ts'
+import * as UserService from '@/user/user.service.ts'
 import { Profile } from '@prisma/client'
 import type { NextFunction, Request, RequestHandler, Response } from 'express'
 
@@ -17,11 +18,11 @@ export const createProfile = async (
 ) => {
   const { userId } = req.params
 
-  if (!userId) {
-    return next(new AppError('validation', 'User ID is required'))
+  if (!await UserService.findUserById(userId)) {
+    return next(new AppError('validation', 'User not found'))
   }
 
-  if (await ProfileService.getProfileByUserId(userId)) {
+  if (await ProfileService.findProfileByUserId(userId)) {
     return next(new AppError('validation', 'Profile already exists'))
   }
 
@@ -39,8 +40,8 @@ export const getProfile: RequestHandler<GetProfileSchema['params']> = async (
   const { onlyNameAndPicture } = req.body ?? { onlyNameAndPicture: false }
 
   const profile = onlyNameAndPicture
-    ? await ProfileService.getProfileNameAndMainPicture(userId)
-    : await ProfileService.getProfileByUserId(userId)
+    ? await ProfileService.findProfileNameAndMainPicture(userId)
+    : await ProfileService.findProfileByUserId(userId)
 
   if (!profile) {
     return next(new AppError('notFound', 'Profile not found'))
@@ -63,10 +64,10 @@ export const updateProfile: RequestHandler<
   const { userId } = req.params
   const { name, age, bio, sexRole, genders } = req.body
 
-  const existingProfile = await ProfileService.getProfileByUserId(userId)
+  const existingProfile = await ProfileService.findProfileByUserId(userId)
 
   if (!existingProfile) {
-    next(new AppError('notFound', 'Profile not found'))
+    return next(new AppError('notFound', 'Profile not found'))
   }
 
   const updatedProfile = await ProfileService.updateProfile(userId, {

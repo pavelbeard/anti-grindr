@@ -6,15 +6,20 @@ import {
   GetProfileSchema,
   UpdateProfileSchema,
 } from '@/profile/profile.types'
-import { Profile } from '@prisma/client'
+import * as UserService from '@/user/user.service.ts'
+import { Profile, User } from '@prisma/client'
 import type { Request, Response } from 'express'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('profile/profile.service', () => ({
   createProfile: vi.fn(),
-  getProfileByUserId: vi.fn(),
-  getProfileNameAndMainPicture: vi.fn(),
+  findProfileByUserId: vi.fn(),
+  findProfileNameAndMainPicture: vi.fn(),
   updateProfile: vi.fn(),
+}))
+
+vi.mock('user/user.service', () => ({
+  findUserById: vi.fn(),
 }))
 
 vi.mock('lib/utility-classes', () => ({
@@ -56,6 +61,7 @@ describe('profile.controller', () => {
       vi.mocked(ProfileService.createProfile).mockResolvedValueOnce(
         null as unknown as Profile,
       )
+      vi.mocked(UserService.findUserById).mockResolvedValueOnce(null)
 
       await ProfileController.createProfile(
         request as Request<CreateProfileSchema['params'], unknown, unknown>,
@@ -64,10 +70,10 @@ describe('profile.controller', () => {
       )
 
       expect(next).toHaveBeenCalledWith(
-        new AppError('validation', 'User ID is required'),
+        new AppError('validation', 'User not found'),
       )
       expect(next.mock.calls[0][0]).toBeInstanceOf(AppError)
-      expect(next.mock.calls[0][0].message).toBe('User ID is required')
+      expect(next.mock.calls[0][0].message).toBe('User not found')
       expect(next.mock.calls[0][0].type).toBe('validation')
     })
 
@@ -76,7 +82,13 @@ describe('profile.controller', () => {
         params: { userId: '1' },
       } as unknown as Request<CreateProfileSchema['params'], unknown, unknown>
 
-      vi.mocked(ProfileService.getProfileByUserId).mockResolvedValueOnce({
+      vi.mocked(UserService.findUserById).mockResolvedValueOnce({
+        id: '1',
+        email: 'profile@example.com',
+        password: 'testtest',
+      } as unknown as User)
+
+      vi.mocked(ProfileService.findProfileByUserId).mockResolvedValueOnce({
         id: '1',
         userId: '1',
         createdAt: new Date(),
@@ -112,7 +124,12 @@ describe('profile.controller', () => {
         params: { userId: '1' },
       } as unknown as Request<CreateProfileSchema['params'], unknown, unknown>
 
-      vi.mocked(ProfileService.getProfileByUserId).mockResolvedValueOnce(null)
+      vi.mocked(UserService.findUserById).mockResolvedValueOnce({
+        id: '1',
+        email: 'profile@example.com',
+        password: 'testtest',
+      } as unknown as User)
+      vi.mocked(ProfileService.findProfileByUserId).mockResolvedValueOnce(null)
       vi.mocked(ProfileService.createProfile).mockResolvedValueOnce({
         id: '1',
         userId: '1',
@@ -142,7 +159,7 @@ describe('profile.controller', () => {
         params: { userId: '1' },
       } as unknown as Request<GetProfileSchema['params'], unknown, unknown>
 
-      vi.mocked(ProfileService.getProfileByUserId).mockResolvedValueOnce(null)
+      vi.mocked(ProfileService.findProfileByUserId).mockResolvedValueOnce(null)
 
       await ProfileController.getProfile(
         request as Request<GetProfileSchema['params'], unknown, unknown>,
@@ -170,7 +187,7 @@ describe('profile.controller', () => {
         >
 
         vi.mocked(
-          ProfileService.getProfileNameAndMainPicture,
+          ProfileService.findProfileNameAndMainPicture,
         ).mockResolvedValueOnce({
           name: 'John Doe',
           pictures: [
@@ -224,7 +241,7 @@ describe('profile.controller', () => {
           GetProfileSchema['body']
         >
 
-        vi.mocked(ProfileService.getProfileByUserId).mockResolvedValueOnce({
+        vi.mocked(ProfileService.findProfileByUserId).mockResolvedValueOnce({
           id: '1',
           userId: '1',
           createdAt: new Date(),
@@ -314,7 +331,7 @@ describe('profile.controller', () => {
         UpdateProfileSchema['body']
       >
 
-      vi.mocked(ProfileService.getProfileByUserId).mockResolvedValueOnce(null)
+      vi.mocked(ProfileService.findProfileByUserId).mockResolvedValueOnce(null)
 
       await ProfileController.updateProfile(
         request as Request<
@@ -335,7 +352,7 @@ describe('profile.controller', () => {
     })
 
     it('should update the profile.', async () => {
-      vi.mocked(ProfileService.getProfileByUserId).mockResolvedValueOnce({
+      vi.mocked(ProfileService.findProfileByUserId).mockResolvedValueOnce({
         id: '1',
         userId: '1',
         createdAt: new Date(),

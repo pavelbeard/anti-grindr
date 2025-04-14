@@ -14,6 +14,7 @@ export default defineConfig({
     alias: {
       lib: '/src/lib',
       user: '/src/user',
+      profile: '/src/profile',
     },
     env: {
       ...process.env,

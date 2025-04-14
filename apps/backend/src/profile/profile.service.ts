@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma.ts'
-import { Prisma, Profile, User } from '@prisma/client'
+import { Prisma, User } from '@prisma/client'
 
 export const createProfile = async (userId: User['id']) => {
   return await prisma.profile.create({
@@ -9,7 +9,7 @@ export const createProfile = async (userId: User['id']) => {
   })
 }
 
-export const getProfileByUserId = async (userId: User['id']) => {
+export const findProfileByUserId = async (userId: User['id']) => {
   return await prisma.profile.findUnique({
     where: { userId },
     include: {
@@ -31,10 +31,11 @@ export const getProfileByUserId = async (userId: User['id']) => {
   })
 }
 
-export const getProfileNameAndMainPicture = async (userId: User['id']) => {
+export const findProfileNameAndMainPicture = async (userId: User['id']) => {
   return await prisma.profile.findUnique({
     where: { userId },
     select: {
+      userId: true,
       name: true,
       pictures: { take: 1 },
     },
@@ -46,10 +47,8 @@ export const updateProfile = async (
   userId: User['id'],
   data: Prisma.ProfileUpdateInput,
 ) => {
-  const profile: Profile | null = await prisma.profile.update({
+  return await prisma.profile.update({
     where: { userId },
     data,
   })
-
-  return profile
 }
