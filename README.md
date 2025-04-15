@@ -15,9 +15,9 @@
 | 👤 Create user                 | ✅ Done  |
 | 🔐 Login                      | ✅ Done  |
 | 🔓 Logout                     | ✅ Done  |
-| ♻️ Refresh token              | ⏳ To Do |
-| 🧑‍💻 Create profile            | ⏳ To Do |
-| 🛠️ Update profile             | ⏳ To Do |
+| ♻️ Refresh token              | ✅ Done |
+| 🧑‍💻 Create profile            | ✅ Done |
+| 🛠️ Update profile             | ✅ Done |
 | 🖼️ Albums (private/public)     | ⏳ To Do |
 | 💬 Messaging                   | ⏳ To Do |
 
