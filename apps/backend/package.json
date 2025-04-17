@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "type": "module",
   "scripts": {
     "dev": "NODE_ENV=development tsx watch --include ./swagger.yaml ./src/index.ts",

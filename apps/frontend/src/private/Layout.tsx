@@ -1,8 +1,8 @@
-import useAuthentication from '@/lib/hooks/useAuthentication'
+import { useAuthContext } from '@/lib/contexts/AuthContext'
 import { Navigate, Outlet } from 'react-router'
 
 export default function PrivateLayout() {
-  const { isAuthenticated } = useAuthentication()   
+  const { isAuthenticated } = useAuthContext()
 
   if (!isAuthenticated) {
     return <Navigate to="/sign-in" />
