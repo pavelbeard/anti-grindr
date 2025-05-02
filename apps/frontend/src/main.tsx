@@ -1,12 +1,19 @@
+import AuthProvider from '@/lib/providers/AuthProvider'
 import RoutesScheme from '@/RoutesScheme'
+import TanstackQueryDevTools from '@/TanstackQueryDevTools'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import AuthProvider from './lib/providers/AuthProvider'
+
+const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      <RoutesScheme />
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <RoutesScheme />
+      </AuthProvider>
+      <TanstackQueryDevTools />
+    </QueryClientProvider>
   </StrictMode>,
 )
