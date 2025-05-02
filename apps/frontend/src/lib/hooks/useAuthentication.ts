@@ -1,7 +1,10 @@
-import { useLocalStorage } from "@/lib/hooks/useLocalStorage"
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage'
 
 export default function useAuthentication() {
+  // Using local storage for persistence.
   const [isAuthenticated] = useLocalStorage('isAuthenticated', false)
 
-  return { isAuthenticated}
+  // check authentication
+
+  return { isAuthenticated }
 }
